@@ -110,6 +110,7 @@ void adc1_regular_conversions(void)
 
 void adc1_inject_conversions(void)
 {
+
 	((ADC1)->ISR) |= ((JEOSI));
 	((ADC1)->IER) |= ((JEOSI));
 	((ADC1)->CR) |= ADC_JSTART;
