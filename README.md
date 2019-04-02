@@ -1,1 +1,1 @@
-# BRICK_48V
+# Development Files for the 48V Brick
