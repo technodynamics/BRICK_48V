@@ -93,6 +93,7 @@ int main(void)
   lptim1_enable();
   adc1_enable();
   tim1_enable(120U);
+  dac_enable();
 
   system_ptr_config();
 

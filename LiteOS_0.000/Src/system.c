@@ -25,6 +25,9 @@ STRING boost = {5U,{'b','o','o','s','t'}};
 STRING pass = {4U,{'p','a','s','s'}};
 STRING lock = {4U,{'l','o','c','k'}};
 STRING dcbase = {4U,{'d','c',' ',' '}};
+STRING dacup = {5U,{'d','a','c','u','p'}};
+STRING dacdn = {5U,{'d','a','c','d','n'}};
+STRING dacrpt = {6U,{'d','a','c','r','p','t'}};
 
 
 
@@ -208,7 +211,6 @@ if(system_flags & AVG_TEMP_FLAG)
 avg_samp_bank(&ex_temp);
 avg_samp_bank(&in_temp);
 system_flags &= ~(AVG_TEMP_FLAG);
-driveB(4U,0U);
 }
 else
 {
@@ -217,7 +219,6 @@ if((((system_time)->time_nums)[millis]) != last_tsamp)
 inj_conversion_channel = 1U;
 adc1_inject_conversions();
 last_tsamp = (((system_time)->time_nums)[millis]);
-driveB(4U,1U);
 }
 }
 
@@ -469,6 +470,16 @@ if(string_compare(cmd,&pass))
 if(dc_search(cmd))
 {uart1_transmit(&money);}
 
+
+if(string_compare(cmd,&dacup))
+{dac_up(200U);uart1_transmit(&money);}
+
+if(string_compare(cmd,&dacdn))
+{dac_down(200U);uart1_transmit(&money);}
+
+if(string_compare(cmd,&dacrpt))
+{dacreport();}
+
 uart1_transmit(&cli_return);
 uart1_transmit(&prompt);
 
@@ -718,3 +729,14 @@ void tbankreport(void)
 }
 
 
+void dacreport(void)
+{
+	uint32_t temp;
+
+	temp = ((DAC)->DOR2);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+
+}

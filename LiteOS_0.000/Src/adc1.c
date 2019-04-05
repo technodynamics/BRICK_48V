@@ -43,6 +43,7 @@ while(((ADC1)->CR) & DPD)
 while((((ADC1)->CR) & ADC_REG_GEN) == 0U)
 {((ADC1)->CR) |= ADC_REG_GEN;}
 /*Prep for calibration*/
+
 while(((ADC1)->CR) & ((ADC_JSTP)|(ADC_STP)|(ADC_JSTART)|(ADC_START)|(ADC_DIS)|(ADC_EN)))
 {((ADC1)->CR) |= ((ADC_JSTP)|(ADC_STP));}
 adci=0U;

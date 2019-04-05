@@ -147,6 +147,9 @@ void flagreport(void);
 void flagclear(void);
 void convreport(void);
 void tempreport(void);
+void dacreport(void);
+
+
 uint8_t dc_search(STRING* cmd);
 
 void driveB(uint8_t pin, uint8_t on_off);

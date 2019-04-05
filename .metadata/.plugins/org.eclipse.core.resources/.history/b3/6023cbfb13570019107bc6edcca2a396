@@ -1,0 +1,28 @@
+/*
+ * dac.c
+ *
+ *  Created on: Mar 27, 2019
+ *      Author: neufe
+ */
+
+
+#include "stm32l4xx_hal.h"
+#include <system.h>
+
+
+
+void dac_enable(void)
+{
+/*Enable RCC Clock*/
+((RCC)->APB1ENR1) |= RCC_DAC_ENABLE;
+/*Set GPIO PA5 to Analog Mode */
+((GPIOA)->MODER) |= ((AN_MODE)<<(GPIO_5_DSHIFT));
+
+((DAC)->CR) |= CH2_ENABLE;
+
+
+
+
+
+
+}
