@@ -59,6 +59,8 @@ NVIC_EnableIRQ(USART1_IRQn);
 outi = 0U;
 debug = 0U;
 uart_flags |= ((UART_STARTED)|(CMD_EXECUTE));
+
+
 }
 
 
