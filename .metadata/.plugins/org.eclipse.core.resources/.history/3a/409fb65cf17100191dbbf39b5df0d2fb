@@ -158,15 +158,20 @@ void duty_cycle_increment(void)
 
 if(mode == BOOST_MODE)
 {
+
+
 ((TIM1)->CCR1) &= 0;
 ((TIM1)->CCR1) |= (dc_val - percent);
 
 ((TIM1)->CCR2) &= 0;
 ((TIM1)->CCR2) |= (dc_val);
+
 }
 
 if(mode == BUCK_MODE)
 {
+
+
 ((TIM1)->CCR3) &= 0;
 ((TIM1)->CCR3) |= (dc_val - percent);
 

@@ -2116,8 +2116,8 @@ void SystemClock_Config(void)
  8000e76:	f7ff ff5f 	bl	8000d38 <lptim1_enable>
   adc1_enable();
  8000e7a:	f7ff fe41 	bl	8000b00 <adc1_enable>
-  tim1_enable(120U);
- 8000e7e:	2078      	movs	r0, #120	; 0x78
+  tim1_enable(60U);
+ 8000e7e:	203c      	movs	r0, #60	; 0x3c
  8000e80:	f000 fe9e 	bl	8001bc0 <tim1_enable>
   dac_enable();
  8000e84:	f7ff fefa 	bl	8000c7c <dac_enable>

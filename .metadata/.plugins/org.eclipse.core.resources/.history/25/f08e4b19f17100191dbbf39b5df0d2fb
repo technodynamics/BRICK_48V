@@ -103,12 +103,6 @@ void boost_mode(void)
 
 mode = BOOST_MODE;
 
-if(dc == 0U)
-{
-dc = 2U;
-dc_val = percent*dc;
-}
-
 	        ((TIM1)->CCR1) &= 0;
 	        ((TIM1)->CCR1) |= (dc_val - percent);
 
@@ -133,6 +127,7 @@ void lockout_mode(void)
 	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_HI_SHIFT));
 	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_LO_SHIFT));
 
+dc = 0U;
 }
 void passthru_mode(void)
 {
@@ -143,6 +138,7 @@ void passthru_mode(void)
 	((TIM1)->CCMR2) &= 0U;
 	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_HI_SHIFT));
 	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_LO_SHIFT));
+dc = 0U;
 }
 
 uint8_t mode_check(void)
@@ -150,32 +146,16 @@ uint8_t mode_check(void)
 
 void duty_cycle_increment(void)
 {
-
-	dc++;
+dc++;
 	if(dc > 99U)
 	{dc = 99U;}
 	dc_val = percent*dc;
 
-if(mode == BOOST_MODE)
-{
 ((TIM1)->CCR1) &= 0;
 ((TIM1)->CCR1) |= (dc_val - percent);
 
 ((TIM1)->CCR2) &= 0;
 ((TIM1)->CCR2) |= (dc_val);
-}
-
-if(mode == BUCK_MODE)
-{
-((TIM1)->CCR3) &= 0;
-((TIM1)->CCR3) |= (dc_val - percent);
-
-((TIM1)->CCR4) &= 0;
-((TIM1)->CCR4) |= (dc_val);
-}
-
-
-
 
 }
 
