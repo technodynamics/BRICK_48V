@@ -66,6 +66,9 @@ dc = 0;
 ((TIM1)->CCER) |= ((1U)<<(CC3_SHIFT));
 ((TIM1)->CCER) |= ((1U)<<(CC4_SHIFT));
 
+/*Invert Buck Signals*/
+((TIM1)->CCER) |= ((1U)<<(CC3_SHIFT))<<(1U);
+((TIM1)->CCER) |= ((1U)<<(CC4_SHIFT))<<(1U);
 
 /*Enable Outputs*/
 ((TIM1)->BDTR) |= MOE;
@@ -81,13 +84,17 @@ dc = 0;
 void buck_mode(void)
 {
 mode = BUCK_MODE;
-
+if(dc == 0U)
+{
+dc = 2U;
+dc_val = percent*dc;
+}
 
         ((TIM1)->CCR3) &= 0;
-        ((TIM1)->CCR3) |= (dc_val - percent);
+        ((TIM1)->CCR3) |= dc_val ;
 
         ((TIM1)->CCR4) &= 0;
-        ((TIM1)->CCR4) |= (dc_val);
+        ((TIM1)->CCR4) |= (dc_val - percent);
 
 	    ((TIM1)->CCMR1) &= 0U;
 		((TIM1)->CCMR1) |= ((LOW_MODE)<<(BOOST_HI_SHIFT));
@@ -95,7 +102,7 @@ mode = BUCK_MODE;
 
 		((TIM1)->CCMR2) &= 0U;
 		((TIM1)->CCMR2) |= ((PWM_MODE_1)<<(BUCK_HI_SHIFT));
-		((TIM1)->CCMR2) |= ((PWM_MODE_1)<<(BUCK_LO_SHIFT));
+		((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_LO_SHIFT));
 }
 
 void boost_mode(void)
@@ -130,8 +137,8 @@ void lockout_mode(void)
 	((TIM1)->CCMR1) |= ((LOW_MODE)<<(BOOST_LO_SHIFT));
 
 	((TIM1)->CCMR2) &= 0U;
-	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_HI_SHIFT));
-	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_LO_SHIFT));
+	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_HI_SHIFT));
+	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_LO_SHIFT));
 
 }
 void passthru_mode(void)
@@ -141,8 +148,8 @@ void passthru_mode(void)
 	((TIM1)->CCMR1) |= ((LOW_MODE)<<(BOOST_LO_SHIFT));
 
 	((TIM1)->CCMR2) &= 0U;
-	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_HI_SHIFT));
-	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_LO_SHIFT));
+	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_HI_SHIFT));
+	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_LO_SHIFT));
 }
 
 uint8_t mode_check(void)
@@ -200,10 +207,10 @@ if(mode == BUCK_MODE)
 	dc = dcn;
 	dc_val = percent*dc;
     ((TIM1)->CCR3) &= 0;
-    ((TIM1)->CCR3) |= (dc_val - percent);
+    ((TIM1)->CCR3) |= dc_val;
 
     ((TIM1)->CCR4) &= 0;
-    ((TIM1)->CCR4) |= (dc_val);
+    ((TIM1)->CCR4) |= (dc_val - percent);
 }
 
 

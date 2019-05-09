@@ -36,7 +36,6 @@
 #define BUCK_HI_SHIFT   OCM4_SHIFT
 
 
-
 #define MOE  ((1U)<<(15U))
 #define CEN_ALN_3 ((3U)<<(5U))
 
