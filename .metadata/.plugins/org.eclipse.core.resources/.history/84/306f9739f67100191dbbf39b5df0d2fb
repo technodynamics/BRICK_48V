@@ -38,8 +38,6 @@
 
 
 #define MOE  ((1U)<<(15U))
-#define CEN_ALN_3 ((3U)<<(5U))
-
 
 #define LOW_MODE   0x04
 #define HIGH_MODE  0x05

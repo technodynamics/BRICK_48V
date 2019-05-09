@@ -150,10 +150,11 @@ uint8_t mode_check(void)
 
 void duty_cycle_increment(void)
 {
-dc++;
-if(dc > 99U)
-{dc = 99U;}
-dc_val = percent*dc;
+
+	dc++;
+	if(dc > 99U)
+	{dc = 99U;}
+	dc_val = percent*dc;
 
 if(mode == BOOST_MODE)
 {
