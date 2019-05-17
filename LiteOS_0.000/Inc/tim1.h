@@ -42,10 +42,14 @@
 
 #define LOW_MODE   0x04
 #define HIGH_MODE  0x05
+
+#define INV_LOW_MODE HIGH_MODE
+#define INV_HIGH_MODE LOW_MODE
+
 #define PWM_MODE_1 0x06
 #define PWM_MODE_2 0x07
 
-#define SW_DELAY 2U
+#define SW_DELAY 1U
 
 void tim1_enable(uint32_t freq);
 
@@ -57,6 +61,7 @@ void passthru_mode(void);
 uint8_t mode_check(void);
 
 void duty_cycle_increment(void);
+void duty_cycle_decrement(void);
 void set_duty_cycle(uint8_t dcn);
 
 

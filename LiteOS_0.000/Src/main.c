@@ -92,7 +92,7 @@ int main(void)
   uart1_enable();
   lptim1_enable();
   adc1_enable();
-  tim1_enable(40U);
+  tim1_enable(60U);
   dac_enable();
 
   system_ptr_config();
@@ -112,8 +112,9 @@ int main(void)
 	/* USER CODE END WHILE */
 
 
-	system_run_function();
+	system_management();
 	adc_management();
+	pmic_management();
   /* USER CODE BEGIN 3 */
 
   }

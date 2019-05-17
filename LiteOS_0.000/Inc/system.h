@@ -98,6 +98,17 @@
 #define ONES 0xFFFFFFFF
 
 
+#define DEFAULT_OVP      1290U
+#define DEFAULT_I_TARGET  40U
+#define DEFAULT_UVP       720U
+
+#define DEFAULT_MAX_CURRENT 2295U
+#define DEFAULT_MAX_VOLTAGE 3225U
+
+
+#define CURRENT_HYS       2U
+#define VOLTAGE_HYS       10U
+
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA
 
@@ -105,7 +116,11 @@
 #define ADC_INIT_FLAG    1U
 #define AVG_BANKS_FLAG   2U
 #define ADC_CONV_FLAG    4U
-#define AVG_TEMP_FLAG   8U
+#define AVG_TEMP_FLAG    8U
+#define TEMP_INIT_FLAG   16U
+#define PMIC_INIT_FLAG   32U
+#define PMIC_ENABLE_FLAG 64U
+#define PMIC_ACTION_FLAG 128U
 
 
 typedef struct{
@@ -121,7 +136,7 @@ typedef struct{
 
 
 
-void system_run_function(void);
+void system_management(void);
 void system_io_config(void);
 void system_ptr_config(void);
 void system_ins_search(STRING* cmd);
@@ -136,7 +151,7 @@ uint8_t string_compare(STRING* in1, STRING* in2);
 
 
 void adc_management(void);
-
+void pmic_management(void);
 
 void tim1report(void);
 void voltreport(void);
@@ -151,6 +166,9 @@ void dacreport(void);
 
 
 uint8_t dc_search(STRING* cmd);
+uint8_t current_decode(STRING* cmd);
+uint8_t voltage_decode(STRING* cmd);
+
 
 void driveB(uint8_t pin, uint8_t on_off);
 void driveA(uint8_t pin, uint8_t on_off);

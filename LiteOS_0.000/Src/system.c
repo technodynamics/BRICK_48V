@@ -28,6 +28,8 @@ STRING dcbase = {4U,{'d','c',' ',' '}};
 STRING dacup = {5U,{'d','a','c','u','p'}};
 STRING dacdn = {5U,{'d','a','c','d','n'}};
 STRING dacrpt = {6U,{'d','a','c','r','p','t'}};
+STRING drven = {5U,{'d','r','v','e','n'}};
+STRING drvdis = {6U,{'d','r','v','d','i','s'}};
 
 
 
@@ -91,6 +93,15 @@ int16_t ts_cal1;
 int16_t ts_cal2;
 
 
+uint16_t cs_offset;
+
+uint16_t v_ovp;
+uint16_t i_target;
+uint16_t v_uvp;
+
+uint32_t last_pmic_action;
+
+
 uint32_t dbg1;
 uint32_t dbg2;
 
@@ -112,27 +123,6 @@ void system_io_config(void)
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_3_SHIFT)));
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_4_SHIFT)));
 ((GPIOA)->ODR) &= (~((1U)<<(GPIO_15_SHIFT)));
-
-dbg1=0U;
-dbg2=0U;
-
-for(sysi = 0U; sysi < 100U; sysi++)
-{
-cs_channel.samples[sysi] = 0U;
-iv_channel.samples[sysi] = 0U;
-ov_channel.samples[sysi] = 0U;
-}
-cs_channel.avg = 0U;
-iv_channel.avg = 0U;
-ov_channel.avg = 0U;
-
-system_time = 0U;
-last_vsamp = 0U;
-last_tsamp = 0U;
-
-system_flags = 0U;
-system_flags |= ADC_INIT_FLAG;
-adc_conversion_channel = 1U;
 
 }
 
@@ -156,8 +146,13 @@ void system_ptr_config(void)
 	last_tsamp = 0U;
 
 	system_flags = 0U;
-	system_flags |= ADC_INIT_FLAG;
+	system_flags |= (ADC_INIT_FLAG|TEMP_INIT_FLAG|PMIC_INIT_FLAG);
 	adc_conversion_channel = 1U;
+	cs_offset = 0U;
+	v_ovp = DEFAULT_OVP;
+	i_target = DEFAULT_I_TARGET;
+	v_uvp = DEFAULT_UVP;
+
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
 	ts_cal2 = *((int16_t*)TS_CAL2_PTR);
@@ -165,7 +160,7 @@ void system_ptr_config(void)
 }
 
 
-void system_run_function(void)
+void system_management(void)
 {
 
 flags = uart1_get_flags();
@@ -221,6 +216,76 @@ adc1_inject_conversions();
 last_tsamp = (((system_time)->time_nums)[millis]);
 }
 }
+
+
+
+
+
+}
+
+
+void pmic_management(void)
+{
+uint8_t mc = mode_check();
+
+if(system_flags & ADC_INIT_FLAG)
+{return;}
+
+if(system_flags & TEMP_INIT_FLAG)
+{return;}
+
+
+
+if(system_flags & PMIC_ENABLE_FLAG)
+{
+
+if(system_flags & PMIC_INIT_FLAG)
+{
+cs_offset = ((&cs_channel)->avg) - 10U;
+system_flags &= ~(PMIC_INIT_FLAG);
+}
+
+
+if(mc == LOCKOUT_MODE)
+{buck_mode(); set_duty_cycle(3U);}
+
+if((system_flags & PMIC_ACTION_FLAG) == 0U)
+{
+if(((&ov_channel)->avg) < (v_ovp - VOLTAGE_HYS))
+{
+if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
+{duty_cycle_increment();}
+}
+
+if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
+{duty_cycle_decrement();}
+if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
+{duty_cycle_decrement();}
+
+
+
+system_flags |= PMIC_ACTION_FLAG;
+last_pmic_action = (((system_time)->time_nums)[millis])+10U;
+
+if(last_pmic_action >= 1000U)
+{last_pmic_action -= 1000U;}
+
+}
+else
+{
+if((((system_time)->time_nums)[millis]) == last_pmic_action)
+{system_flags &= ~(PMIC_ACTION_FLAG);}
+}
+}
+else
+{
+system_flags &= ~(PMIC_ACTION_FLAG);
+if(mc == LOCKOUT_MODE)
+{return;}
+else
+{lockout_mode();}
+}
+
 
 
 
@@ -364,8 +429,11 @@ default:return;
 inj_conversion_channel++;
 }
 
+if((ex_sample_count > 100U) && (in_sample_count > 100U))
+{system_flags &= ~(TEMP_INIT_FLAG);}
 
-if((cs_sample_count > 100U) & (ov_sample_count > 100U) & (iv_sample_count > 100U))
+
+if((cs_sample_count > 100U) && (ov_sample_count > 100U) && (iv_sample_count > 100U))
 {system_flags &= ~(ADC_INIT_FLAG);}
 
 }
@@ -470,6 +538,12 @@ if(string_compare(cmd,&pass))
 if(dc_search(cmd))
 {uart1_transmit(&money);}
 
+if(current_decode(cmd))
+{uart1_transmit(&money);}
+
+if(voltage_decode(cmd))
+{uart1_transmit(&money);}
+
 
 if(string_compare(cmd,&dacup))
 {dac_up(200U);uart1_transmit(&money);}
@@ -479,6 +553,12 @@ if(string_compare(cmd,&dacdn))
 
 if(string_compare(cmd,&dacrpt))
 {dacreport();}
+
+if(string_compare(cmd,&drven))
+{system_flags |= PMIC_ENABLE_FLAG; uart1_transmit(&money);}
+
+if(string_compare(cmd,&drvdis))
+{system_flags &= ~(PMIC_ENABLE_FLAG); uart1_transmit(&money);}
 
 uart1_transmit(&cli_return);
 uart1_transmit(&prompt);
@@ -519,8 +599,108 @@ return 1U;
 }
 
 
+uint8_t current_decode(STRING* cmd)
+{
+uint8_t ones;
+uint8_t tens;
+uint32_t hundreds;
+uint32_t thousands;
+uint32_t new_current;
+
+if(((cmd)->length) != 6U)
+{return 0U;}
 
 
+if( (((cmd)->string)[0U]) != 'i' )
+{return 0U;}
+if( (((cmd)->string)[1U]) != 's' )
+{return 0U;}
+
+if( ((((cmd)->string)[2U]) > 47U) && ((((cmd)->string)[2U]) < 58U ) )
+{thousands = (((cmd)->string)[2U]) - 48U; }
+else
+{return 0U;}
+
+if( ((((cmd)->string)[3U]) > 47U) && ((((cmd)->string)[3U]) < 58U ) )
+{hundreds = (((cmd)->string)[3U]) - 48U;}
+else
+{return 0U;}
+
+if( ((((cmd)->string)[4U]) > 47U) && ((((cmd)->string)[4U]) < 58U ) )
+{tens = (((cmd)->string)[4U]) - 48U;}
+else
+{return 0U;}
+
+if( ((((cmd)->string)[5U]) > 47U) && ((((cmd)->string)[5U]) < 58U ) )
+{ones = (((cmd)->string)[5U]) - 48U;}
+else
+{return 0U;}
+
+
+
+new_current = (thousands*1000)+(hundreds * 100) + (tens*10) + ones;
+
+if(new_current > DEFAULT_MAX_CURRENT)
+{i_target = DEFAULT_MAX_CURRENT;}
+else
+{i_target = new_current;}
+
+
+return 1U;
+
+}
+
+
+uint8_t voltage_decode(STRING* cmd)
+{
+uint8_t ones;
+uint8_t tens;
+uint32_t hundreds;
+uint32_t thousands;
+uint32_t new_voltage;
+
+if(((cmd)->length) != 6U)
+{return 0U;}
+
+
+if( (((cmd)->string)[0U]) != 'v' )
+{return 0U;}
+if( (((cmd)->string)[1U]) != 's' )
+{return 0U;}
+
+if( ((((cmd)->string)[2U]) > 47U) && ((((cmd)->string)[2U]) < 58U ) )
+{thousands = (((cmd)->string)[2U]) - 48U; }
+else
+{return 0U;}
+
+if( ((((cmd)->string)[3U]) > 47U) && ((((cmd)->string)[3U]) < 58U ) )
+{hundreds = (((cmd)->string)[3U]) - 48U;}
+else
+{return 0U;}
+
+if( ((((cmd)->string)[4U]) > 47U) && ((((cmd)->string)[4U]) < 58U ) )
+{tens = (((cmd)->string)[4U]) - 48U;}
+else
+{return 0U;}
+
+if( ((((cmd)->string)[5U]) > 47U) && ((((cmd)->string)[5U]) < 58U ) )
+{ones = (((cmd)->string)[5U]) - 48U;}
+else
+{return 0U;}
+
+
+
+new_voltage = (thousands*1000)+(hundreds * 100) + (tens*10) + ones;
+
+if(new_voltage > DEFAULT_MAX_VOLTAGE)
+{v_ovp = DEFAULT_MAX_VOLTAGE;}
+else
+{v_ovp = new_voltage;}
+
+
+return 1U;
+
+}
 
 void flagclear(void)
 {
@@ -599,10 +779,19 @@ void voltreport(void)
 
 
 	uart1_transmit(&capC);
-	temp = cs_channel.avg;
+	temp = (cs_channel.avg- cs_offset);
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
+
+
+	uart1_transmit(&capC);
+	temp = (cs_channel.avg);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+
 
 	uart1_transmit(&capO);
 	temp = ov_channel.avg;
