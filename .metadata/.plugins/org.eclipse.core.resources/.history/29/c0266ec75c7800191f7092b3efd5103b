@@ -113,8 +113,6 @@ mode = BOOST_MODE;
 if(dc < 2U)
 {dc = 2U;}
 
-			dc_val = percent*dc;
-
 	        ((TIM1)->CCR1) &= 0;
 	        ((TIM1)->CCR1) |= (dc_val - (percent));
 

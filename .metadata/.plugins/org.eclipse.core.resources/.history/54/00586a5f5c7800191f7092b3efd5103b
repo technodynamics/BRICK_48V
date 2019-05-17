@@ -264,15 +264,14 @@ if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
 {duty_cycle_decrement();}
 
 
-if((dc_check() == 99U) && (mc == BUCK_MODE) && (increment == 1U))
+if((dc_check() == 99U) && (mc == BOOST_MODE) && (increment == 1U))
 {
-set_duty_cycle(3U);
-boost_mode();
+
 }
 
 
 system_flags |= PMIC_ACTION_FLAG;
-last_pmic_action = (((system_time)->time_nums)[millis])+50U;
+last_pmic_action = (((system_time)->time_nums)[millis])+10U;
 
 if(last_pmic_action >= 1000U)
 {last_pmic_action -= 1000U;}

@@ -85,10 +85,10 @@ void buck_mode(void)
 {
 mode = BUCK_MODE;
 if(dc < 2U)
-{dc = 2U;}
-
-        dc_val = percent*dc;
-
+{
+dc = 2U;
+dc_val = percent*dc;
+}
 
         ((TIM1)->CCR4) &= 0;
         ((TIM1)->CCR4) |= dc_val;
@@ -111,9 +111,10 @@ void boost_mode(void)
 mode = BOOST_MODE;
 
 if(dc < 2U)
-{dc = 2U;}
-
-			dc_val = percent*dc;
+{
+dc = 2U;
+dc_val = percent*dc;
+}
 
 	        ((TIM1)->CCR1) &= 0;
 	        ((TIM1)->CCR1) |= (dc_val - (percent));
@@ -228,6 +229,7 @@ dc = dcn;
 
 if(mode == BOOST_MODE)
 {
+	dc = dcn;
 	dc_val = percent*dc;
     ((TIM1)->CCR1) &= 0;
     ((TIM1)->CCR1) |= (dc_val - (percent));
@@ -237,6 +239,7 @@ if(mode == BOOST_MODE)
 }
 if(mode == BUCK_MODE)
 {
+	dc = dcn;
 	dc_val = percent*dc;
     ((TIM1)->CCR4) &= 0;
     ((TIM1)->CCR4) |= dc_val;
