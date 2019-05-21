@@ -105,9 +105,14 @@
 #define DEFAULT_MAX_CURRENT 2295U
 #define DEFAULT_MAX_VOLTAGE 3225U
 
+#define EXP_CURRENT 40U
+#define EXP_VOLTAGE 1340U
+
+
 
 #define CURRENT_HYS       2U
 #define VOLTAGE_HYS       10U
+#define PMIC_DELAY        5U
 
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA

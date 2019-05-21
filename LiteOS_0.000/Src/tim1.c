@@ -20,7 +20,7 @@ uint8_t mode;
 void tim1_enable(uint32_t freq)
 {
 clk_freq = 47000U;
-arr_val = clk_freq/(freq);
+arr_val = clk_freq/(2U*freq);
 /*Enable TIM1 in RCC*/
 ((RCC)->APB2ENR) |= RCC_TIM1_ENABLE;
 
@@ -75,7 +75,7 @@ dc = 0;
 
 
 /*Set for Center Aligned Mode 3*/
-//((TIM1)->CR1) |= CEN_ALN_3;
+((TIM1)->CR1) |= CEN_ALN_3;
 
 /*Start the Timer*/
 ((TIM1)->CR1) |= TIM1_ENABLE;
@@ -83,18 +83,13 @@ dc = 0;
 
 void buck_mode(void)
 {
-mode = BUCK_MODE;
-if(dc < 2U)
-{dc = 2U;}
-
-        dc_val = percent*dc;
-
+	mode = BUCK_MODE;
 
         ((TIM1)->CCR4) &= 0;
         ((TIM1)->CCR4) |= dc_val;
 
         ((TIM1)->CCR3) &= 0;
-        ((TIM1)->CCR3) |= (dc_val -  (percent));
+        ((TIM1)->CCR3) |= (dc_val +  (SW_DELAY*percent));
 
 	    ((TIM1)->CCMR1) &= 0U;
 		((TIM1)->CCMR1) |= ((LOW_MODE)<<(BOOST_HI_SHIFT));
@@ -102,21 +97,17 @@ if(dc < 2U)
 
 		((TIM1)->CCMR2) &= 0U;
 		((TIM1)->CCMR2) |= ((PWM_MODE_1)<<(BUCK_HI_SHIFT));
-		((TIM1)->CCMR2) |= ((INV_LOW_MODE)<<(BUCK_LO_SHIFT));
+		((TIM1)->CCMR2) |= ((PWM_MODE_1)<<(BUCK_LO_SHIFT));
 }
 
 void boost_mode(void)
 {
 
-mode = BOOST_MODE;
+	mode = BOOST_MODE;
 
-if(dc < 2U)
-{dc = 2U;}
-
-			dc_val = percent*dc;
 
 	        ((TIM1)->CCR1) &= 0;
-	        ((TIM1)->CCR1) |= (dc_val - (percent));
+	        ((TIM1)->CCR1) |= (dc_val + (SW_DELAY*percent));
 
 	        ((TIM1)->CCR2) &= 0;
 	        ((TIM1)->CCR2) |= (dc_val);
@@ -157,21 +148,21 @@ uint8_t mode_check(void)
 {return mode;}
 
 uint8_t dc_check(void)
-{return dc;}
+{return (dc);}
 
 
 
 void duty_cycle_increment(void)
 {
-dc+=1U;
-if(dc > 99U)
-{dc = 99U;}
-dc_val = percent*dc;
+dc_val+=1U;
+if(dc_val == (arr_val-1U)-(SW_DELAY*percent))
+{dc_val -= 1U;}
+dc = dc_val/percent;
 
 if(mode == BOOST_MODE)
 {
 ((TIM1)->CCR1) &= 0;
-((TIM1)->CCR1) |= (dc_val - (percent));
+((TIM1)->CCR1) |= (dc_val + (SW_DELAY*percent));
 
 ((TIM1)->CCR2) &= 0;
 ((TIM1)->CCR2) |= (dc_val);
@@ -180,7 +171,7 @@ if(mode == BOOST_MODE)
 if(mode == BUCK_MODE)
 {
 ((TIM1)->CCR3) &= 0;
-((TIM1)->CCR3) |= (dc_val - (percent));
+((TIM1)->CCR3) |= (dc_val + (SW_DELAY*percent));
 
 ((TIM1)->CCR4) &= 0;
 ((TIM1)->CCR4) |= (dc_val);
@@ -191,15 +182,15 @@ if(mode == BUCK_MODE)
 
 void duty_cycle_decrement(void)
 {
-	dc-= 1U;
-	if(dc < 2U)
-	{dc = 2U;}
-	dc_val = percent*dc;
+	dc_val-=1U;
+	if(dc_val == 0U)
+	{dc_val = 1U;}
+	dc = dc_val/percent;
 
 	if(mode == BOOST_MODE)
 	{
 	((TIM1)->CCR1) &= 0;
-	((TIM1)->CCR1) |= (dc_val - (percent));
+	((TIM1)->CCR1) |= (dc_val + (SW_DELAY*percent));
 
 	((TIM1)->CCR2) &= 0;
 	((TIM1)->CCR2) |= (dc_val);
@@ -208,7 +199,7 @@ void duty_cycle_decrement(void)
 	if(mode == BUCK_MODE)
 	{
 	((TIM1)->CCR3) &= 0;
-	((TIM1)->CCR3) |= (dc_val - (percent));
+	((TIM1)->CCR3) |= (dc_val + (SW_DELAY*percent));
 
 	((TIM1)->CCR4) &= 0;
 	((TIM1)->CCR4) |= (dc_val);
@@ -230,7 +221,7 @@ if(mode == BOOST_MODE)
 {
 	dc_val = percent*dc;
     ((TIM1)->CCR1) &= 0;
-    ((TIM1)->CCR1) |= (dc_val - (percent));
+    ((TIM1)->CCR1) |= (dc_val + (SW_DELAY*percent));
 
     ((TIM1)->CCR2) &= 0;
     ((TIM1)->CCR2) |= (dc_val);
@@ -239,10 +230,10 @@ if(mode == BUCK_MODE)
 {
 	dc_val = percent*dc;
     ((TIM1)->CCR4) &= 0;
-    ((TIM1)->CCR4) |= dc_val;
+    ((TIM1)->CCR4) |= (dc_val);
 
     ((TIM1)->CCR3) &= 0;
-    ((TIM1)->CCR3) |= (dc_val - (percent));
+    ((TIM1)->CCR3) |= (dc_val + (SW_DELAY*percent));
 }
 
 
