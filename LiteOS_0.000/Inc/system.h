@@ -112,7 +112,7 @@
 
 #define CURRENT_HYS       2U
 #define VOLTAGE_HYS       10U
-#define PMIC_DELAY        5U
+#define PMIC_DELAY        1U
 
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA

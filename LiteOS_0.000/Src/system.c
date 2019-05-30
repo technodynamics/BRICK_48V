@@ -290,8 +290,6 @@ else
 system_flags &= ~(PMIC_ACTION_FLAG);
 if(mc == LOCKOUT_MODE)
 {return;}
-else
-{lockout_mode();}
 }
 
 }

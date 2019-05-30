@@ -68,7 +68,7 @@ dc = 0;
 
 /*Invert Buck Signals*/
 ((TIM1)->CCER) |= ((1U)<<(CC3_SHIFT))<<(1U);
-((TIM1)->CCER) |= ((1U)<<(CC4_SHIFT))<<(1U);
+//((TIM1)->CCER) |= ((1U)<<(CC4_SHIFT))<<(1U);
 
 /*Enable Outputs*/
 ((TIM1)->BDTR) |= MOE;
