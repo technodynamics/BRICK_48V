@@ -30,7 +30,7 @@ STRING dacdn = {5U,{'d','a','c','d','n'}};
 STRING dacrpt = {6U,{'d','a','c','r','p','t'}};
 STRING drven = {5U,{'d','r','v','e','n'}};
 STRING drvdis = {6U,{'d','r','v','d','i','s'}};
-
+STRING csrs = {4U,{'c','s','r','s'}};
 
 
 
@@ -241,10 +241,9 @@ if(system_flags & PMIC_ENABLE_FLAG)
 
 if(system_flags & PMIC_INIT_FLAG)
 {
-cs_offset = ((&cs_channel)->avg) - 10U;
+cs_offset = ((&cs_channel)->avg) - 40U;
 system_flags &= ~(PMIC_INIT_FLAG);
 }
-
 
 if(mc == LOCKOUT_MODE)
 {
@@ -260,10 +259,16 @@ if(EXP_VOLTAGE > ((&iv_channel)->avg))
 
 if((system_flags & PMIC_ACTION_FLAG) == 0U)
 {
+
 if(((&ov_channel)->avg) < (v_ovp - VOLTAGE_HYS))
 {
 if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
 {duty_cycle_increment();}
+
+if(((&cs_channel)->avg) < cs_offset)
+{duty_cycle_increment();}
+
+
 }
 
 if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
@@ -290,6 +295,8 @@ else
 system_flags &= ~(PMIC_ACTION_FLAG);
 if(mc == LOCKOUT_MODE)
 {return;}
+else
+{lockout_mode();}
 }
 
 }
@@ -560,6 +567,10 @@ if(string_compare(cmd,&drven))
 
 if(string_compare(cmd,&drvdis))
 {system_flags &= ~(PMIC_ENABLE_FLAG); uart1_transmit(&money);}
+
+
+if(string_compare(cmd,&csrs))
+{cs_offset = ((&cs_channel)->avg)-40U; uart1_transmit(&money);}
 
 uart1_transmit(&cli_return);
 uart1_transmit(&prompt);

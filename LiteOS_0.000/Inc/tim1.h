@@ -25,6 +25,12 @@
 #define CC3_SHIFT 8U
 #define CC4_SHIFT 12U
 
+#define CC1PE  3U
+#define CC2PE  11U
+#define CC3PE  3U
+#define CC4PE  11U
+
+
 #define OCM1_SHIFT 4U
 #define OCM2_SHIFT 12U
 #define OCM3_SHIFT 4U
@@ -40,16 +46,18 @@
 #define CEN_ALN_3 ((3U)<<(5U))
 
 
+
+
+
 #define LOW_MODE   0x04
 #define HIGH_MODE  0x05
 
 #define INV_LOW_MODE HIGH_MODE
 #define INV_HIGH_MODE LOW_MODE
-
 #define PWM_MODE_1 0x06
 #define PWM_MODE_2 0x07
 
-#define SW_DELAY 2U
+#define SW_DELAY 5U
 
 void tim1_enable(uint32_t freq);
 
