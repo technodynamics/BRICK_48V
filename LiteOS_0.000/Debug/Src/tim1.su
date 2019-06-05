@@ -5,6 +5,6 @@ tim1.c:20:6:tim1_enable	16	static
 tim1.c:145:6:passthru_mode	0	static
 tim1.c:159:9:mode_check	0	static
 tim1.c:162:9:dc_check	0	static
-tim1.c:167:6:duty_cycle_increment	16	static
+tim1.c:167:6:duty_cycle_increment	12	static
 tim1.c:190:6:duty_cycle_decrement	0	static
-tim1.c:213:6:set_duty_cycle	8	static
+tim1.c:212:6:set_duty_cycle	0	static

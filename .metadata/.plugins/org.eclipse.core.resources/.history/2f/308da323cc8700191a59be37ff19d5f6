@@ -173,8 +173,8 @@ dc = dc_val/percent;
 
 if(mode == BOOST_MODE)
 {
-	((TIM1)->CCR2) = ((dc_val + (SW_DELAY*percent)));
-	((TIM1)->CCR1) = ((dc_val));
+	((TIM1)->CCR1) = (arr_val-(dc_val + (SW_DELAY*percent)));
+	((TIM1)->CCR2) = (arr_val-(dc_val));
 
 }
 
@@ -196,8 +196,9 @@ void duty_cycle_decrement(void)
 
 	if(mode == BOOST_MODE)
 	{
-		((TIM1)->CCR2) = ((dc_val + (SW_DELAY*percent)));
-		((TIM1)->CCR1) = ((dc_val));
+		((TIM1)->CCR1) = (arr_val-(dc_val + (SW_DELAY*percent)));
+		((TIM1)->CCR2) = (arr_val-(dc_val));
+
 	}
 
 	if(mode == BUCK_MODE)
@@ -219,8 +220,8 @@ if(dcn > 99U)
 	dc = dcn;
 
 	dc_val = percent*dc;
-	((TIM1)->CCR2) = ((dc_val + (SW_DELAY*percent)));
-	((TIM1)->CCR1) = ((dc_val));
+	((TIM1)->CCR1) = (arr_val-(dc_val + (SW_DELAY*percent)));
+	((TIM1)->CCR2) = (arr_val-(dc_val));
 
 
     ((TIM1)->CCR4) = (dc_val);
