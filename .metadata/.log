@@ -2531,3 +2531,6 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY org.eclipse.cdt.core 1 0 2019-06-04 20:29:41.881
 !MESSAGE Indexed 'LiteOS_0.000' (27 sources, 48 headers) in 2.19 sec: 6,915 declarations; 27,533 references; 11 unresolved inclusions; 153 syntax errors; 5,311 unresolved names (13%)
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2019-06-05 00:40:18.514
+!MESSAGE Unloading product manager
