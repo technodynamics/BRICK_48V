@@ -120,7 +120,7 @@ void boost_mode(void)
 
 		    ((TIM1)->CCMR1) &= 0U;
 		    ((TIM1)->CCMR1) |= (((1U)<<(CC1PE))|((1U)<<(CC2PE)));
-			((TIM1)->CCMR1) |= ((PWM_MODE_1)<<(BOOST_HI_SHIFT));
+			((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_HI_SHIFT));
 			((TIM1)->CCMR1) |= ((PWM_MODE_1)<<(BOOST_LO_SHIFT));
 
 			((TIM1)->CCMR2) &= 0U;

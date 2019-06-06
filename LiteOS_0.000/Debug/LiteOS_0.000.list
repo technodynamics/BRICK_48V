@@ -21,23 +21,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   8 .ARM.attributes 00000030  00000000  00000000  0002038c  2**0
                   CONTENTS, READONLY
-  9 .debug_info   0001094d  00000000  00000000  000203bc  2**0
+  9 .debug_info   00010940  00000000  00000000  000203bc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 0000231a  00000000  00000000  00030d09  2**0
+ 10 .debug_abbrev 0000231a  00000000  00000000  00030cfc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00001a30  00000000  00000000  00033023  2**0
+ 11 .debug_loc    00001a30  00000000  00000000  00033016  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_aranges 00000650  00000000  00000000  00034a58  2**3
+ 12 .debug_aranges 00000650  00000000  00000000  00034a48  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 000006b0  00000000  00000000  000350a8  2**3
+ 13 .debug_ranges 000006b0  00000000  00000000  00035098  2**3
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_line   00003674  00000000  00000000  00035758  2**0
+ 14 .debug_line   00003674  00000000  00000000  00035748  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    00002413  00000000  00000000  00038dcc  2**0
+ 15 .debug_str    00002406  00000000  00000000  00038dbc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .comment      0000007c  00000000  00000000  0003b1df  2**0
+ 16 .comment      0000007c  00000000  00000000  0003b1c2  2**0
                   CONTENTS, READONLY
- 17 .debug_frame  00000dec  00000000  00000000  0003b25c  2**2
+ 17 .debug_frame  00000dec  00000000  00000000  0003b240  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -4618,9 +4618,9 @@ void boost_mode(void)
  8001d9c:	f640 0008 	movw	r0, #2056	; 0x808
  8001da0:	4301      	orrs	r1, r0
  8001da2:	6199      	str	r1, [r3, #24]
-			((TIM1)->CCMR1) |= ((PWM_MODE_1)<<(BOOST_HI_SHIFT));
+			((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_HI_SHIFT));
  8001da4:	6999      	ldr	r1, [r3, #24]
- 8001da6:	f441 41c0 	orr.w	r1, r1, #24576	; 0x6000
+ 8001da6:	f441 41a0 	orr.w	r1, r1, #20480	; 0x5000
  8001daa:	6199      	str	r1, [r3, #24]
 			((TIM1)->CCMR1) |= ((PWM_MODE_1)<<(BOOST_LO_SHIFT));
  8001dac:	6999      	ldr	r1, [r3, #24]
