@@ -173,6 +173,7 @@ void dacreport(void);
 uint8_t dc_search(STRING* cmd);
 uint8_t current_decode(STRING* cmd);
 uint8_t voltage_decode(STRING* cmd);
+uint8_t exp_voltage_decode(STRING* cmd);
 
 
 void driveB(uint8_t pin, uint8_t on_off);
