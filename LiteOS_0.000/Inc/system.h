@@ -117,6 +117,7 @@
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA
 
+#define RELAY_PIN   ((1U)<<(7U))
 
 #define ADC_INIT_FLAG    1U
 #define AVG_BANKS_FLAG   2U
@@ -154,6 +155,7 @@ void num_to_string(NUMBER* num);
 void convert_to_ascii(uint32_t num);
 uint8_t string_compare(STRING* in1, STRING* in2);
 
+void relay_control(uint8_t on_off);
 
 void adc_management(void);
 void pmic_management(void);

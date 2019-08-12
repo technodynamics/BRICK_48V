@@ -121,10 +121,14 @@ void system_io_config(void)
 ((GPIOA)->MODER) &= (~((IN_MODE)<<(GPIO_15_DSHIFT)));
 ((GPIOA)->MODER) |= (((OUT_MODE)<<(GPIO_15_DSHIFT)));
 
+((GPIOA)->MODER) &= (~((IN_MODE)<<(GPIO_7_DSHIFT)));
+((GPIOA)->MODER) |= (((OUT_MODE)<<(GPIO_7_DSHIFT)));
 
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_3_SHIFT)));
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_4_SHIFT)));
 ((GPIOA)->ODR) &= (~((1U)<<(GPIO_15_SHIFT)));
+((GPIOA)->ODR) &= (~((1U)<<(GPIO_7_SHIFT)));
+
 
 }
 
@@ -158,6 +162,7 @@ void system_ptr_config(void)
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
 	ts_cal2 = *((int16_t*)TS_CAL2_PTR);
+
 
 }
 
@@ -298,11 +303,18 @@ system_flags &= ~(PMIC_ACTION_FLAG);
 if(mc == LOCKOUT_MODE)
 {return;}
 else
-{}
+{lockout_mode();}
 }
 
 }
 
+void relay_control(uint8_t on_off)
+{
+if(on_off)
+{((GPIOA)->ODR) |= RELAY_PIN;}
+else
+{((GPIOA)->ODR) &= ~RELAY_PIN;}
+}
 
 
 void num_to_string(NUMBER* num)
@@ -567,10 +579,18 @@ if(string_compare(cmd,&dacrpt))
 {dacreport();}
 
 if(string_compare(cmd,&drven))
-{system_flags |= PMIC_ENABLE_FLAG; uart1_transmit(&money);}
+{
+relay_control(1U);
+system_flags |= PMIC_ENABLE_FLAG;
+uart1_transmit(&money);
+}
 
 if(string_compare(cmd,&drvdis))
-{system_flags &= ~(PMIC_ENABLE_FLAG); uart1_transmit(&money);}
+{
+relay_control(0U);
+system_flags &= ~(PMIC_ENABLE_FLAG);
+uart1_transmit(&money);
+}
 
 
 if(string_compare(cmd,&csrs))
