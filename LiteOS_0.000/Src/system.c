@@ -127,8 +127,7 @@ void system_io_config(void)
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_3_SHIFT)));
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_4_SHIFT)));
 ((GPIOA)->ODR) &= (~((1U)<<(GPIO_15_SHIFT)));
-((GPIOA)->ODR) &= (~((1U)<<(GPIO_7_SHIFT)));
-
+relay_control(1U);
 
 }
 
@@ -303,7 +302,7 @@ system_flags &= ~(PMIC_ACTION_FLAG);
 if(mc == LOCKOUT_MODE)
 {return;}
 else
-{lockout_mode();}
+{/*lockout_mode();*/}
 }
 
 }
@@ -580,14 +579,12 @@ if(string_compare(cmd,&dacrpt))
 
 if(string_compare(cmd,&drven))
 {
-relay_control(1U);
 system_flags |= PMIC_ENABLE_FLAG;
 uart1_transmit(&money);
 }
 
 if(string_compare(cmd,&drvdis))
 {
-relay_control(0U);
 system_flags &= ~(PMIC_ENABLE_FLAG);
 uart1_transmit(&money);
 }

@@ -163,7 +163,6 @@ void system_ptr_config(void)
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
 	ts_cal2 = *((int16_t*)TS_CAL2_PTR);
 
-	relay_control(1U);
 
 }
 
@@ -304,7 +303,7 @@ system_flags &= ~(PMIC_ACTION_FLAG);
 if(mc == LOCKOUT_MODE)
 {return;}
 else
-{}
+{lockout_mode();}
 }
 
 }
@@ -580,10 +579,18 @@ if(string_compare(cmd,&dacrpt))
 {dacreport();}
 
 if(string_compare(cmd,&drven))
-{system_flags |= PMIC_ENABLE_FLAG; uart1_transmit(&money);}
+{
+relay_control(1U);
+system_flags |= PMIC_ENABLE_FLAG;
+uart1_transmit(&money);
+}
 
 if(string_compare(cmd,&drvdis))
-{system_flags &= ~(PMIC_ENABLE_FLAG); uart1_transmit(&money);}
+{
+relay_control(0U);
+system_flags &= ~(PMIC_ENABLE_FLAG);
+uart1_transmit(&money);
+}
 
 
 if(string_compare(cmd,&csrs))

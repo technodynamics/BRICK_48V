@@ -117,6 +117,7 @@
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA
 
+#define RELAY_PIN   ((1U)<<(7U))
 
 #define ADC_INIT_FLAG    1U
 #define AVG_BANKS_FLAG   2U

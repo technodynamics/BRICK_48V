@@ -119,7 +119,7 @@ void boost_mode(void)
 		((TIM1)->CCMR1) &= 0U;
 		((TIM1)->CCMR1) |= (((1U)<<(CC1PE))|((1U)<<(CC2PE)));
 		((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_EN_SHIFT));
-		((TIM1)->CCMR1) |= ((PWM_MODE_1)<<(BOOST_PWM_SHIFT));
+		((TIM1)->CCMR1) |= ((PWM_MODE_2)<<(BOOST_PWM_SHIFT));
 
 		((TIM1)->CCMR2) &= 0U;
 		((TIM1)->CCMR2) |= (((1U)<<(CC3PE))|((1U)<<(CC4PE)));
@@ -145,13 +145,13 @@ void passthru_mode(void)
 	mode = PASSTHRU_MODE;
 	((TIM1)->CCMR1) &= 0U;
     ((TIM1)->CCMR1) |= (((1U)<<(CC1PE))|((1U)<<(CC2PE)));
-	((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_EN_SHIFT));
 	((TIM1)->CCMR1) |= ((LOW_MODE)<<(BOOST_PWM_SHIFT));
+    ((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_EN_SHIFT));
 
 	((TIM1)->CCMR2) &= 0U;
     ((TIM1)->CCMR2) |= (((1U)<<(CC3PE))|((1U)<<(CC4PE)));
-	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_EN_SHIFT));
-	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_PWM_SHIFT));
+	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_PWM_SHIFT));
+    ((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_EN_SHIFT));
 }
 
 uint8_t mode_check(void)
@@ -180,6 +180,7 @@ if(mode == BUCK_MODE)
 
 void duty_cycle_decrement(void)
 {
+
 	dc_val-=1U;
 	if(dc_val == 0U)
 	{dc_val = 1U;}
@@ -190,13 +191,12 @@ void duty_cycle_decrement(void)
 
 	if(mode == BUCK_MODE)
 	{((TIM1)->CCR3) = (dc_val);}
-
 }
 
 
 void set_duty_cycle(uint8_t dcn)
 {
-if(dcn < 2U)
+if(dcn == 0U)
 {return;}
 if(dcn > 99U)
 {return;}

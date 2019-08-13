@@ -279,9 +279,9 @@ if(((&cs_channel)->avg) < cs_offset)
 }
 
 if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
-{duty_cycle_decrement();}
+{duty_cycle_decrement(); sendcp(1U);}
 if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
-{duty_cycle_decrement();}
+{duty_cycle_decrement();sendcp(2U);}
 
 
 system_flags |= PMIC_ACTION_FLAG;
@@ -582,7 +582,8 @@ if(string_compare(cmd,&drven))
 {
 relay_control(1U);
 system_flags |= PMIC_ENABLE_FLAG;
-uart1_transmit(&money);}
+uart1_transmit(&money);
+}
 
 if(string_compare(cmd,&drvdis))
 {

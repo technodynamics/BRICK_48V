@@ -92,7 +92,7 @@ int main(void)
   uart1_enable();
   lptim1_enable();
   adc1_enable();
-  tim1_enable(120U);
+  tim1_enable(40U);
   dac_enable();
 
   system_ptr_config();
