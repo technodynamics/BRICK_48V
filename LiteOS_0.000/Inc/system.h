@@ -108,25 +108,31 @@
 #define EXP_CURRENT 40U
 #define EXP_VOLTAGE 1300U
 
+#define THERMAL_KICK 800U
 
+#define SHORT_WIRE 300U
+#define OPEN_WIRE  1625U
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
 #define PMIC_DELAY        100U
+#define THERMAL_HYS		  20U
 
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA
 
 #define RELAY_PIN   ((1U)<<(7U))
 
-#define ADC_INIT_FLAG    1U
-#define AVG_BANKS_FLAG   2U
-#define ADC_CONV_FLAG    4U
-#define AVG_TEMP_FLAG    8U
-#define TEMP_INIT_FLAG   16U
-#define PMIC_INIT_FLAG   32U
-#define PMIC_ENABLE_FLAG 64U
-#define PMIC_ACTION_FLAG 128U
+#define ADC_INIT_FLAG       1U
+#define AVG_BANKS_FLAG      2U
+#define ADC_CONV_FLAG       4U
+#define AVG_TEMP_FLAG       8U
+#define TEMP_INIT_FLAG      16U
+#define PMIC_INIT_FLAG      32U
+#define PMIC_ENABLE_FLAG    64U
+#define PMIC_ACTION_FLAG    128U
+#define THERMAL_CON_FLAG    256U
+#define THERMAL_ACTION_FLAG 512U
 
 
 typedef struct{

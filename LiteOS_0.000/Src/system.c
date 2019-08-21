@@ -100,6 +100,11 @@ uint16_t i_target;
 uint16_t v_uvp;
 uint16_t exp_ov;
 
+uint16_t therm_engage;
+uint16_t therm_open;
+uint16_t therm_short;
+uint16_t temp_sample_level;
+uint16_t wire_sample_level;
 
 uint32_t last_pmic_action;
 
@@ -251,6 +256,13 @@ cs_offset = ((&cs_channel)->avg) - 40U;
 system_flags &= ~(PMIC_INIT_FLAG);
 }
 
+if((system_flags & THERMAL_CON_FLAG) == 0U)
+{
+	if(((&ex_temp)->avg) < (therm_engage - THERMAL_HYS))
+		{system_flags |= THERMAL_CON_FLAG;}
+}
+
+
 if(mc == LOCKOUT_MODE)
 {
 set_duty_cycle(3U);
@@ -295,7 +307,19 @@ else
 if((((system_time)->time_nums)[millis]) == last_pmic_action)
 {system_flags &= ~(PMIC_ACTION_FLAG);}
 }
+
+if(system_flags & THERMAL_CON_FLAG)
+{
+
+
+
+
 }
+
+
+}
+
+
 else
 {
 system_flags &= ~(PMIC_ACTION_FLAG);
