@@ -108,20 +108,27 @@
 #define EXP_CURRENT 40U
 #define EXP_VOLTAGE 1300U
 
-#define THERMAL_KICK 800U
+#define SHORT_WIRE 350U
+#define OPEN_WIRE  2485U
 
-#define SHORT_WIRE 300U
-#define OPEN_WIRE  1625U
+#define HOT_TEMP      720U
+#define COLD_TEMP     2470U
+#define FOLDBACK_TEMP 1600U
+//980 ^^
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
 #define PMIC_DELAY        100U
-#define THERMAL_HYS		  20U
+#define THERMAL_HYS		  30U
+#define THERMAL_DELAY     750U
 
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA
 
 #define RELAY_PIN   ((1U)<<(7U))
+
+#define off 0U
+#define on 1U
 
 #define ADC_INIT_FLAG       1U
 #define AVG_BANKS_FLAG      2U

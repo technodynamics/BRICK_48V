@@ -17,6 +17,7 @@
 void dac_enable(void);
 void dac_up(uint32_t increment);
 void dac_down(uint32_t decrement);
+void dac_set(uint32_t set_point);
 
 
 #endif /* DAC_H_ */

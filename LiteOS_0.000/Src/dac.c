@@ -52,3 +52,20 @@ void dac_down(uint32_t decrement)
 	((DAC)->DHR12RD) &= 0U;
 	((DAC)->DHR12RD) |= ((dac_out) << (CH2_SHIFT));
 }
+
+void dac_set(uint32_t set_point)
+{
+if( set_point < 0U)
+{set_point = 0U;}
+
+if(set_point > 4095U)
+{set_point = 4095U;}
+
+dac_out = set_point;
+
+((DAC)->DHR12RD) &= 0U;
+((DAC)->DHR12RD) |= ((dac_out) << (CH2_SHIFT));
+
+
+}
+

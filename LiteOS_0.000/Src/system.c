@@ -1,3 +1,4 @@
+
 /*
  * system.c
  *
@@ -28,6 +29,8 @@ STRING dcbase = {4U,{'d','c',' ',' '}};
 STRING dacup = {5U,{'d','a','c','u','p'}};
 STRING dacdn = {5U,{'d','a','c','d','n'}};
 STRING dacrpt = {6U,{'d','a','c','r','p','t'}};
+STRING dacmx = {5U,{'d','a','c','m','x'}};
+STRING dacmn = {5U,{'d','a','c','m','n'}};
 STRING drven = {5U,{'d','r','v','e','n'}};
 STRING drvdis = {6U,{'d','r','v','d','i','s'}};
 STRING csrs = {4U,{'c','s','r','s'}};
@@ -84,6 +87,8 @@ uint32_t in_sample_count;
 uint32_t conversion_count;
 uint32_t avg_count;
 
+uint32_t pl;
+
 uint32_t avg_dummy;
 uint32_t adc_conversion_channel;
 uint32_t inj_conversion_channel;
@@ -105,7 +110,10 @@ uint16_t therm_open;
 uint16_t therm_short;
 uint16_t temp_sample_level;
 uint16_t wire_sample_level;
+uint16_t last_temp;
 
+
+uint32_t last_therm_action;
 uint32_t last_pmic_action;
 
 
@@ -132,6 +140,7 @@ void system_io_config(void)
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_3_SHIFT)));
 ((GPIOB)->ODR) &= (~((1U)<<(GPIO_4_SHIFT)));
 ((GPIOA)->ODR) &= (~((1U)<<(GPIO_15_SHIFT)));
+
 relay_control(1U);
 
 }
@@ -167,6 +176,7 @@ void system_ptr_config(void)
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
 	ts_cal2 = *((int16_t*)TS_CAL2_PTR);
 
+	dac_set(4095U);
 
 }
 
@@ -250,6 +260,39 @@ if(system_flags & TEMP_INIT_FLAG)
 if(system_flags & PMIC_ENABLE_FLAG)
 {
 
+if(((&ex_temp)->avg) <= SHORT_WIRE)
+{
+system_flags &= ~(PMIC_ENABLE_FLAG);
+lockout_mode();
+relay_control(off);
+return;
+}
+
+if(((&ex_temp)->avg) >= OPEN_WIRE)
+{
+system_flags &= ~(PMIC_ENABLE_FLAG);
+lockout_mode();
+relay_control(off);
+return;
+}
+
+if(((&ex_temp)->avg) <= HOT_TEMP)
+{
+system_flags &= ~(PMIC_ENABLE_FLAG);
+lockout_mode();
+relay_control(off);
+return;
+}
+
+if(((&ex_temp)->avg) >= COLD_TEMP)
+{
+system_flags &= ~(PMIC_ENABLE_FLAG);
+lockout_mode();
+relay_control(off);
+return;
+}
+
+
 if(system_flags & PMIC_INIT_FLAG)
 {
 cs_offset = ((&cs_channel)->avg) - 40U;
@@ -258,13 +301,27 @@ system_flags &= ~(PMIC_INIT_FLAG);
 
 if((system_flags & THERMAL_CON_FLAG) == 0U)
 {
-	if(((&ex_temp)->avg) < (therm_engage - THERMAL_HYS))
+	if(((&ex_temp)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
 		{system_flags |= THERMAL_CON_FLAG;}
 }
+else
+{
+	if(((&ex_temp)->avg) > (FOLDBACK_TEMP + THERMAL_HYS))
+			{system_flags &= ~(THERMAL_CON_FLAG);}
+}
+
 
 
 if(mc == LOCKOUT_MODE)
 {
+relay_control(on);
+
+sysi = 0U;
+while(sysi < 100U)
+{sysi++;}
+sysi = 0U;
+
+
 set_duty_cycle(3U);
 
 if(exp_ov < ((&iv_channel)->avg))
@@ -310,9 +367,36 @@ if((((system_time)->time_nums)[millis]) == last_pmic_action)
 
 if(system_flags & THERMAL_CON_FLAG)
 {
+	if((system_flags & THERMAL_ACTION_FLAG) == 0U)
+	{
+    if(((&ex_temp)->avg) < last_temp)
+    {
+    pl = last_temp - ((&ex_temp)->avg);
+    if(pl > THERMAL_HYS)
+    {i_target -= 10U; uart1_transmit(&money);}
+    }
 
+    if(((&ex_temp)->avg) > last_temp)
+    {
+    pl =((&ex_temp)->avg) - last_temp;
+    if(pl > THERMAL_HYS)
+    {i_target += 10U; uart1_transmit(&money);}
+    }
 
+    last_temp = ((&ex_temp)->avg);
+    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
 
+    if(last_therm_action >= 1000U)
+    {last_therm_action -= 1000U;}
+
+    system_flags |= THERMAL_ACTION_FLAG;
+	}
+
+	else
+	{
+	if((((system_time)->time_nums)[millis]) == last_therm_action)
+	{system_flags &= ~(THERMAL_ACTION_FLAG);}
+	}
 
 }
 
@@ -597,6 +681,12 @@ if(string_compare(cmd,&dacup))
 
 if(string_compare(cmd,&dacdn))
 {dac_down(200U);uart1_transmit(&money);}
+
+if(string_compare(cmd,&dacmn))
+{dac_set(0U);uart1_transmit(&money);}
+
+if(string_compare(cmd,&dacmx))
+{dac_set(4095U);uart1_transmit(&money);}
 
 if(string_compare(cmd,&dacrpt))
 {dacreport();}
