@@ -110,7 +110,7 @@
 
 
 
-#define CURRENT_HYS       3U
+#define CURRENT_HYS       10U
 #define VOLTAGE_HYS       10U
 #define PMIC_DELAY        100U
 

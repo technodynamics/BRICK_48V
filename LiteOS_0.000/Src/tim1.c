@@ -145,12 +145,12 @@ void passthru_mode(void)
 	mode = PASSTHRU_MODE;
 	((TIM1)->CCMR1) &= 0U;
     ((TIM1)->CCMR1) |= (((1U)<<(CC1PE))|((1U)<<(CC2PE)));
-	((TIM1)->CCMR1) |= ((LOW_MODE)<<(BOOST_PWM_SHIFT));
+	((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_PWM_SHIFT));
     ((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_EN_SHIFT));
 
 	((TIM1)->CCMR2) &= 0U;
     ((TIM1)->CCMR2) |= (((1U)<<(CC3PE))|((1U)<<(CC4PE)));
-	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_PWM_SHIFT));
+	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_PWM_SHIFT));
     ((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_EN_SHIFT));
 }
 

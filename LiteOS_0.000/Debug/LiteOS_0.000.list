@@ -21,23 +21,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   8 .ARM.attributes 00000030  00000000  00000000  000203b0  2**0
                   CONTENTS, READONLY
-  9 .debug_info   00010a6b  00000000  00000000  000203e0  2**0
+  9 .debug_info   00010a78  00000000  00000000  000203e0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 00002341  00000000  00000000  00030e4b  2**0
+ 10 .debug_abbrev 00002341  00000000  00000000  00030e58  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00001b0a  00000000  00000000  0003318c  2**0
+ 11 .debug_loc    00001b0a  00000000  00000000  00033199  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_aranges 00000660  00000000  00000000  00034c98  2**3
+ 12 .debug_aranges 00000660  00000000  00000000  00034ca8  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 000006d8  00000000  00000000  000352f8  2**3
+ 13 .debug_ranges 000006d8  00000000  00000000  00035308  2**3
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_line   000036a8  00000000  00000000  000359d0  2**0
+ 14 .debug_line   000036a8  00000000  00000000  000359e0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    0000241f  00000000  00000000  00039078  2**0
+ 15 .debug_str    0000242c  00000000  00000000  00039088  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .comment      0000007c  00000000  00000000  0003b497  2**0
+ 16 .comment      0000007c  00000000  00000000  0003b4b4  2**0
                   CONTENTS, READONLY
- 17 .debug_frame  00000df4  00000000  00000000  0003b514  2**2
+ 17 .debug_frame  00000df4  00000000  00000000  0003b530  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -2116,8 +2116,8 @@ void SystemClock_Config(void)
  8000e76:	f7ff ff5f 	bl	8000d38 <lptim1_enable>
   adc1_enable();
  8000e7a:	f7ff fe41 	bl	8000b00 <adc1_enable>
-  tim1_enable(40U);
- 8000e7e:	2028      	movs	r0, #40	; 0x28
+  tim1_enable(120U);
+ 8000e7e:	2078      	movs	r0, #120	; 0x78
  8000e80:	f001 f81c 	bl	8001ebc <tim1_enable>
   dac_enable();
  8000e84:	f7ff fefa 	bl	8000c7c <dac_enable>
@@ -2689,7 +2689,7 @@ if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
  8001202:	f8bb 2000 	ldrh.w	r2, [fp]
  8001206:	1a9a      	subs	r2, r3, r2
  8001208:	f8b9 3000 	ldrh.w	r3, [r9]
- 800120c:	3b01      	subs	r3, #1
+ 800120c:	3b14      	subs	r3, #20
  800120e:	429a      	cmp	r2, r3
  8001210:	d201      	bcs.n	8001216 <pmic_management+0x9a>
 {duty_cycle_increment();}
@@ -2714,7 +2714,7 @@ if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
  800123a:	f8da 2320 	ldr.w	r2, [sl, #800]	; 0x320
  800123e:	1ad2      	subs	r2, r2, r3
  8001240:	f8b9 3000 	ldrh.w	r3, [r9]
- 8001244:	3301      	adds	r3, #1
+ 8001244:	3314      	adds	r3, #20
  8001246:	429a      	cmp	r2, r3
  8001248:	d901      	bls.n	800124e <pmic_management+0xd2>
 {duty_cycle_decrement();}
@@ -2726,12 +2726,12 @@ system_flags |= PMIC_ACTION_FLAG;
 last_pmic_action = (((system_time)->time_nums)[millis])+PMIC_DELAY;
  8001256:	f8d8 3000 	ldr.w	r3, [r8]
  800125a:	685b      	ldr	r3, [r3, #4]
- 800125c:	f103 0232 	add.w	r2, r3, #50	; 0x32
+ 800125c:	f103 0264 	add.w	r2, r3, #100	; 0x64
 if(last_pmic_action >= 1000U)
  8001260:	f5b2 7f7a 	cmp.w	r2, #1000	; 0x3e8
 {last_pmic_action -= 1000U;}
  8001264:	bf2a      	itet	cs
- 8001266:	f2a3 33b6 	subwcs	r3, r3, #950	; 0x3b6
+ 8001266:	f5a3 7361 	subcs.w	r3, r3, #900	; 0x384
 last_pmic_action = (((system_time)->time_nums)[millis])+PMIC_DELAY;
  800126a:	603a      	strcc	r2, [r7, #0]
 {last_pmic_action -= 1000U;}
@@ -4914,9 +4914,9 @@ void passthru_mode(void)
  8001fd0:	f640 0008 	movw	r0, #2056	; 0x808
  8001fd4:	4301      	orrs	r1, r0
  8001fd6:	6199      	str	r1, [r3, #24]
-	((TIM1)->CCMR1) |= ((LOW_MODE)<<(BOOST_PWM_SHIFT));
+	((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_PWM_SHIFT));
  8001fd8:	6999      	ldr	r1, [r3, #24]
- 8001fda:	f041 0140 	orr.w	r1, r1, #64	; 0x40
+ 8001fda:	f041 0150 	orr.w	r1, r1, #80	; 0x50
  8001fde:	6199      	str	r1, [r3, #24]
     ((TIM1)->CCMR1) |= ((HIGH_MODE)<<(BOOST_EN_SHIFT));
  8001fe0:	6999      	ldr	r1, [r3, #24]
@@ -4930,9 +4930,9 @@ void passthru_mode(void)
  8001fec:	69da      	ldr	r2, [r3, #28]
  8001fee:	4302      	orrs	r2, r0
  8001ff0:	61da      	str	r2, [r3, #28]
-	((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_PWM_SHIFT));
+	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_PWM_SHIFT));
  8001ff2:	69da      	ldr	r2, [r3, #28]
- 8001ff4:	f042 0250 	orr.w	r2, r2, #80	; 0x50
+ 8001ff4:	f042 0240 	orr.w	r2, r2, #64	; 0x40
  8001ff8:	61da      	str	r2, [r3, #28]
     ((TIM1)->CCMR2) |= ((HIGH_MODE)<<(BUCK_EN_SHIFT));
  8001ffa:	69da      	ldr	r2, [r3, #28]
