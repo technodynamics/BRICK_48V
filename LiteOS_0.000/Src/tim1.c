@@ -14,6 +14,7 @@ uint32_t arr_val;
 uint8_t dc;
 uint32_t dc_val;
 uint32_t percent;
+uint32_t delay_time;
 
 uint8_t mode;
 

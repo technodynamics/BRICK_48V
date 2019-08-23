@@ -102,12 +102,12 @@ uint16_t cs_offset;
 
 uint16_t v_ovp;
 uint16_t i_target;
+uint16_t hs_i_target;
 uint16_t v_uvp;
 uint16_t exp_ov;
 
-uint16_t therm_engage;
-uint16_t therm_open;
-uint16_t therm_short;
+
+uint16_t wire_error_count;
 uint16_t temp_sample_level;
 uint16_t wire_sample_level;
 uint16_t last_temp;
@@ -170,8 +170,12 @@ void system_ptr_config(void)
 	cs_offset = 0U;
 	v_ovp = DEFAULT_OVP;
 	i_target = DEFAULT_I_TARGET;
+	hs_i_target = DEFAULT_I_TARGET;
 	v_uvp = DEFAULT_UVP;
 	exp_ov = EXP_VOLTAGE;
+	wire_error_count = 0U;
+
+
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
 	ts_cal2 = *((int16_t*)TS_CAL2_PTR);
@@ -255,62 +259,21 @@ if(system_flags & ADC_INIT_FLAG)
 if(system_flags & TEMP_INIT_FLAG)
 {return;}
 
-
+if(system_flags & THERM_WIRE_ERR_FLAG)
+{
+if(system_flags & PMIC_ENABLE_FLAG)
+{system_flags &= ~(PMIC_ENABLE_FLAG);}
+return;
+}
 
 if(system_flags & PMIC_ENABLE_FLAG)
 {
-
-if(((&ex_temp)->avg) <= SHORT_WIRE)
-{
-system_flags &= ~(PMIC_ENABLE_FLAG);
-lockout_mode();
-relay_control(off);
-return;
-}
-
-if(((&ex_temp)->avg) >= OPEN_WIRE)
-{
-system_flags &= ~(PMIC_ENABLE_FLAG);
-lockout_mode();
-relay_control(off);
-return;
-}
-
-if(((&ex_temp)->avg) <= HOT_TEMP)
-{
-system_flags &= ~(PMIC_ENABLE_FLAG);
-lockout_mode();
-relay_control(off);
-return;
-}
-
-if(((&ex_temp)->avg) >= COLD_TEMP)
-{
-system_flags &= ~(PMIC_ENABLE_FLAG);
-lockout_mode();
-relay_control(off);
-return;
-}
-
 
 if(system_flags & PMIC_INIT_FLAG)
 {
 cs_offset = ((&cs_channel)->avg) - 40U;
 system_flags &= ~(PMIC_INIT_FLAG);
 }
-
-if((system_flags & THERMAL_CON_FLAG) == 0U)
-{
-	if(((&ex_temp)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
-		{system_flags |= THERMAL_CON_FLAG;}
-}
-else
-{
-	if(((&ex_temp)->avg) > (FOLDBACK_TEMP + THERMAL_HYS))
-			{system_flags &= ~(THERMAL_CON_FLAG);}
-}
-
-
 
 if(mc == LOCKOUT_MODE)
 {
@@ -365,42 +328,6 @@ if((((system_time)->time_nums)[millis]) == last_pmic_action)
 {system_flags &= ~(PMIC_ACTION_FLAG);}
 }
 
-if(system_flags & THERMAL_CON_FLAG)
-{
-	if((system_flags & THERMAL_ACTION_FLAG) == 0U)
-	{
-    if(((&ex_temp)->avg) < last_temp)
-    {
-    pl = last_temp - ((&ex_temp)->avg);
-    if(pl > THERMAL_HYS)
-    {i_target -= 10U; uart1_transmit(&money);}
-    }
-
-    if(((&ex_temp)->avg) > last_temp)
-    {
-    pl =((&ex_temp)->avg) - last_temp;
-    if(pl > THERMAL_HYS)
-    {i_target += 10U; uart1_transmit(&money);}
-    }
-
-    last_temp = ((&ex_temp)->avg);
-    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
-
-    if(last_therm_action >= 1000U)
-    {last_therm_action -= 1000U;}
-
-    system_flags |= THERMAL_ACTION_FLAG;
-	}
-
-	else
-	{
-	if((((system_time)->time_nums)[millis]) == last_therm_action)
-	{system_flags &= ~(THERMAL_ACTION_FLAG);}
-	}
-
-}
-
-
 }
 
 
@@ -414,6 +341,117 @@ else
 }
 
 }
+
+void thermal_management(void)
+{
+
+	if((system_flags & PMIC_ENABLE_FLAG) == 0U)
+	{return;}
+
+	if(((&ex_temp)->avg) <= SHORT_WIRE)
+	{
+	system_flags |= THERM_WIRE_ERR_FLAG;
+	lockout_mode();
+	relay_control(off);
+	return;
+	}
+
+	if(((&ex_temp)->avg) >= OPEN_WIRE)
+	{
+	system_flags |= THERM_WIRE_ERR_FLAG;
+	lockout_mode();
+	relay_control(off);
+	return;
+	}
+
+	if(((&ex_temp)->avg) <= HOT_TEMP)
+	{
+	system_flags |= THERM_WIRE_ERR_FLAG;
+	lockout_mode();
+	relay_control(off);
+	return;
+	}
+
+	if(((&ex_temp)->avg) >= COLD_TEMP)
+	{
+	system_flags |= THERM_WIRE_ERR_FLAG;
+	lockout_mode();
+	relay_control(off);
+	return;
+	}
+
+	if((system_flags & THERMAL_CON_FLAG) == 0U)
+	{
+		if(((&ex_temp)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
+			{
+			system_flags |= THERMAL_CON_FLAG;
+			last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
+			}
+	}
+	else
+	{
+		if(((&ex_temp)->avg) > (FOLDBACK_TEMP + THERMAL_HYS))
+				{system_flags &= ~(THERMAL_CON_FLAG);}
+	}
+
+
+	if(system_flags & THERMAL_CON_FLAG)
+	{
+		if((system_flags & THERMAL_ACTION_FLAG) == 0U)
+		{
+	    if(((&ex_temp)->avg) < last_temp)
+	    {
+	    pl = last_temp - ((&ex_temp)->avg);
+	    if(pl > THERMAL_MAX_DELTA)
+	    {
+	    if(i_target <= 30)
+	    {i_target = 0U;}
+	    else
+	    {i_target -= 25U;}
+	    sendcp(2U);
+	    last_temp = ((&ex_temp)->avg);
+	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+
+	    if(last_therm_action >= 1000U)
+	    {last_therm_action -= 1000U;}
+
+	    system_flags |= THERMAL_ACTION_FLAG;
+	    }
+	    }
+
+	    if(((&ex_temp)->avg) > last_temp)
+	    {
+	    pl =((&ex_temp)->avg) - last_temp;
+	    if(pl > THERMAL_MAX_DELTA)
+	    {
+	    if(i_target >= (hs_i_target - CURRENT_HYS))
+	    {i_target = hs_i_target;}
+	    else
+	    {i_target += 25U;}
+	    sendcp(1U);
+	    last_temp = ((&ex_temp)->avg);
+	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+
+	    if(last_therm_action >= 1000U)
+	    {last_therm_action -= 1000U;}
+
+	    system_flags |= THERMAL_ACTION_FLAG;
+	    }
+	    }
+
+
+		}
+
+		else
+		{
+		if((((system_time)->time_nums)[millis]) == last_therm_action)
+		{system_flags &= ~(THERMAL_ACTION_FLAG);}
+		}
+
+	}
+}
+
+
 
 void relay_control(uint8_t on_off)
 {
@@ -788,10 +826,12 @@ else
 new_current = (thousands*1000)+(hundreds * 100) + (tens*10) + ones;
 
 if(new_current > DEFAULT_MAX_CURRENT)
-{i_target = DEFAULT_MAX_CURRENT;}
+{hs_i_target = DEFAULT_MAX_CURRENT;}
 else
-{i_target = new_current;}
+{hs_i_target = new_current;}
 
+if((system_flags & THERMAL_CON_FLAG) == 0U)
+{i_target = new_current;}
 
 return 1U;
 

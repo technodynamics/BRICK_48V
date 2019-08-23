@@ -99,7 +99,7 @@
 
 
 #define DEFAULT_OVP      500U
-#define DEFAULT_I_TARGET  40U
+#define DEFAULT_I_TARGET  2295U
 #define DEFAULT_UVP       720U
 
 #define DEFAULT_MAX_CURRENT 2295U
@@ -108,7 +108,7 @@
 #define EXP_CURRENT 40U
 #define EXP_VOLTAGE 1300U
 
-#define SHORT_WIRE 350U
+#define SHORT_WIRE 400U
 #define OPEN_WIRE  2485U
 
 #define HOT_TEMP      720U
@@ -121,6 +121,7 @@
 #define PMIC_DELAY        100U
 #define THERMAL_HYS		  30U
 #define THERMAL_DELAY     750U
+#define THERMAL_MAX_DELTA 50U
 
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA
@@ -140,6 +141,7 @@
 #define PMIC_ACTION_FLAG    128U
 #define THERMAL_CON_FLAG    256U
 #define THERMAL_ACTION_FLAG 512U
+#define THERM_WIRE_ERR_FLAG 1024U
 
 
 typedef struct{
@@ -172,6 +174,7 @@ void relay_control(uint8_t on_off);
 
 void adc_management(void);
 void pmic_management(void);
+void thermal_management(void);
 
 void tim1report(void);
 void voltreport(void);

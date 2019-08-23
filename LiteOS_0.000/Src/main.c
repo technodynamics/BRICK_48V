@@ -115,6 +115,8 @@ int main(void)
 	system_management();
 	adc_management();
 	pmic_management();
+
+	thermal_management();
   /* USER CODE BEGIN 3 */
 
   }
