@@ -6,5 +6,5 @@ tim1.c:144:6:passthru_mode	0	static
 tim1.c:158:9:mode_check	0	static
 tim1.c:161:9:dc_check	0	static
 tim1.c:166:6:duty_cycle_increment	0	static
-tim1.c:182:6:duty_cycle_decrement	0	static
-tim1.c:198:6:set_duty_cycle	0	static
+tim1.c:184:6:duty_cycle_decrement	0	static
+tim1.c:201:6:set_duty_cycle	0	static

@@ -98,23 +98,29 @@
 #define ONES 0xFFFFFFFF
 
 
-#define DEFAULT_OVP      500U
-#define DEFAULT_I_TARGET  2295U
+#define DEFAULT_OVP      3100U
+#define DEFAULT_I_TARGET  500U
 #define DEFAULT_UVP       720U
 
 #define DEFAULT_MAX_CURRENT 2295U
 #define DEFAULT_MAX_VOLTAGE 3225U
 
-#define EXP_CURRENT 40U
-#define EXP_VOLTAGE 1300U
+#define EXP_CURRENT 500U
+#define EXP_VOLTAGE 3000U
 
-#define SHORT_WIRE 400U
-#define OPEN_WIRE  2485U
+#define SHORT_WIRE_RUN 400U
+#define OPEN_WIRE_RUN  2485U
+
+#define SHORT_WIRE 200U
+#define OPEN_WIRE  1245U
 
 #define HOT_TEMP      720U
 #define COLD_TEMP     2470U
 #define FOLDBACK_TEMP 1600U
 //980 ^^
+
+#define INPUT_BAD   875U
+
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
@@ -127,6 +133,9 @@
 #define TS_CAL2_PTR 0x1FFF75CA
 
 #define RELAY_PIN   ((1U)<<(7U))
+#define RELAY_DELAY  500U
+#define STUP_DELAY   10U
+
 
 #define off 0U
 #define on 1U
@@ -142,7 +151,17 @@
 #define THERMAL_CON_FLAG    256U
 #define THERMAL_ACTION_FLAG 512U
 #define THERM_WIRE_ERR_FLAG 1024U
+#define START_UP_FLAG       2048U
 
+
+#define FIRST_LAP_FLAG    1U
+#define NO_SHORT_FLAG     2U
+#define NO_OPEN_FLAG      4U
+#define RELAY_ENABLE_FLAG 8U
+#define RELAY_ENGAGE_FLAG 16U
+#define PMIC_STUP_FLAG    32U
+#define INPUT_ERR_FLAG    64U
+#define CURRENT_MOD_FLAG  128U
 
 typedef struct{
 	uint32_t bin;
@@ -161,6 +180,7 @@ void system_management(void);
 void system_io_config(void);
 void system_ptr_config(void);
 void system_ins_search(STRING* cmd);
+uint32_t start_up_check(void);
 void raise_avg_flag(void);
 void raise_temp_flag(void);
 void add_sample(uint32_t num, uint8_t inj);
@@ -175,6 +195,7 @@ void relay_control(uint8_t on_off);
 void adc_management(void);
 void pmic_management(void);
 void thermal_management(void);
+void start_up_procedure(void);
 
 void tim1report(void);
 void voltreport(void);
@@ -186,6 +207,7 @@ void flagclear(void);
 void convreport(void);
 void tempreport(void);
 void dacreport(void);
+void stupreport(void);
 
 
 uint8_t dc_search(STRING* cmd);

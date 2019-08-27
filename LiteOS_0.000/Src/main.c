@@ -45,7 +45,7 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-uint8_t count;
+uint32_t flag_checker;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -110,13 +110,21 @@ int main(void)
   {
 
 	/* USER CODE END WHILE */
+    flag_checker = start_up_check();
 
-
-	system_management();
-	adc_management();
-	pmic_management();
-
-	thermal_management();
+    if(flag_checker)
+    {
+    	system_management();
+    	adc_management();
+    	start_up_procedure();
+    }
+    else
+    {
+    	system_management();
+    	adc_management();
+    	pmic_management();
+    	thermal_management();
+    }
   /* USER CODE BEGIN 3 */
 
   }

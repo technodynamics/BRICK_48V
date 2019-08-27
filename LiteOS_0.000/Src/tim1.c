@@ -163,11 +163,13 @@ uint8_t dc_check(void)
 
 
 
-void duty_cycle_increment(void)
+void duty_cycle_increment(uint32_t step)
 {
-dc_val+=1U;
-if(dc_val == (arr_val-1U))
-{dc_val -= 1U;}
+
+
+dc_val+=step;
+if(dc_val >= (arr_val - 1U))
+{dc_val = (arr_val - 1U);}
 dc = dc_val/percent;
 
 if(mode == BOOST_MODE)
@@ -179,13 +181,14 @@ if(mode == BUCK_MODE)
 }
 
 
-void duty_cycle_decrement(void)
+void duty_cycle_decrement(uint32_t step)
 {
+    if(step >= dc_val)
+    {dc_val = 0U;}
+    else
+    {dc_val -= step;}
 
-	dc_val-=1U;
-	if(dc_val == 0U)
-	{dc_val = 1U;}
-	dc = dc_val/percent;
+    dc = dc_val/percent;
 
 	if(mode == BOOST_MODE)
 	{((TIM1)->CCR1) = ((dc_val));}

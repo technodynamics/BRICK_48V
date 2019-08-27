@@ -17,6 +17,7 @@ STRING timerpt = {4U,{'t','i','m','e'}};
 STRING bankrpt = {4U,{'b','a','n','k'}};
 STRING tbankrpt = {5U,{'t','b','a','n','k'}};
 STRING flagrpt = {4U,{'f','l','a','g'}};
+STRING stuprpt = {4U,{'s','t','u','p'}};
 STRING convrpt = {4U,{'c','o','n','v'}};
 STRING temprpt = {4U,{'t','e','m','p'}};
 STRING flagclr = {5U,{'f','l','c','l','r'}};
@@ -56,7 +57,9 @@ STRING cp4 = {3U,{'c','p','4'}};
 /*System Prompt*/
 STRING prompt = {11U,{'D','E','V','@','S','T','M','3','2',':',' '}};
 STRING cli_return = {2U,{10U,13U}};
+
 uint32_t system_flags;
+uint32_t start_up_flags;
 
 STRING* cmd;
 uint8_t flags;
@@ -116,6 +119,11 @@ uint16_t last_temp;
 uint32_t last_therm_action;
 uint32_t last_pmic_action;
 
+uint32_t first_lap;
+uint32_t secs_start;
+uint32_t stup_action;
+
+
 
 uint32_t dbg1;
 uint32_t dbg2;
@@ -165,7 +173,7 @@ void system_ptr_config(void)
 	last_tsamp = 0U;
 
 	system_flags = 0U;
-	system_flags |= (ADC_INIT_FLAG|TEMP_INIT_FLAG|PMIC_INIT_FLAG);
+	system_flags |= (ADC_INIT_FLAG|TEMP_INIT_FLAG|PMIC_INIT_FLAG|START_UP_FLAG);
 	adc_conversion_channel = 1U;
 	cs_offset = 0U;
 	v_ovp = DEFAULT_OVP;
@@ -174,15 +182,25 @@ void system_ptr_config(void)
 	v_uvp = DEFAULT_UVP;
 	exp_ov = EXP_VOLTAGE;
 	wire_error_count = 0U;
+	first_lap = 0U;
 
 
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
 	ts_cal2 = *((int16_t*)TS_CAL2_PTR);
 
-	dac_set(4095U);
+	dac_set(0U);
 
 }
+
+uint32_t start_up_check(void)
+{
+if(system_flags & START_UP_FLAG)
+{return 1U;}
+else
+{return 0U;}
+}
+
 
 
 void system_management(void)
@@ -261,6 +279,9 @@ if(system_flags & TEMP_INIT_FLAG)
 
 if(system_flags & THERM_WIRE_ERR_FLAG)
 {
+dac_set(0U);
+lockout_mode();
+relay_control(off);
 if(system_flags & PMIC_ENABLE_FLAG)
 {system_flags &= ~(PMIC_ENABLE_FLAG);}
 return;
@@ -269,50 +290,24 @@ return;
 if(system_flags & PMIC_ENABLE_FLAG)
 {
 
-if(system_flags & PMIC_INIT_FLAG)
-{
-cs_offset = ((&cs_channel)->avg) - 40U;
-system_flags &= ~(PMIC_INIT_FLAG);
-}
-
-if(mc == LOCKOUT_MODE)
-{
-relay_control(on);
-
-sysi = 0U;
-while(sysi < 100U)
-{sysi++;}
-sysi = 0U;
-
-
-set_duty_cycle(3U);
-
-if(exp_ov < ((&iv_channel)->avg))
-{buck_mode();}
-
-if(exp_ov > ((&iv_channel)->avg))
-{boost_mode();}
-}
-
-
 if((system_flags & PMIC_ACTION_FLAG) == 0U)
 {
 
 if(((&ov_channel)->avg) < (v_ovp - VOLTAGE_HYS))
 {
 if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
-{duty_cycle_increment();}
+{duty_cycle_increment(1U);}
 
 if(((&cs_channel)->avg) < cs_offset)
-{duty_cycle_increment();}
+{duty_cycle_increment(1U);}
 
 
 }
 
 if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
-{duty_cycle_decrement();}
+{duty_cycle_decrement(1U);}
 if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
-{duty_cycle_decrement();}
+{duty_cycle_decrement(1U);}
 
 
 system_flags |= PMIC_ACTION_FLAG;
@@ -337,7 +332,7 @@ system_flags &= ~(PMIC_ACTION_FLAG);
 if(mc == LOCKOUT_MODE)
 {return;}
 else
-{/*lockout_mode();*/}
+{lockout_mode();}
 }
 
 }
@@ -348,35 +343,27 @@ void thermal_management(void)
 	if((system_flags & PMIC_ENABLE_FLAG) == 0U)
 	{return;}
 
-	if(((&ex_temp)->avg) <= SHORT_WIRE)
+	if(((&ex_temp)->avg) <= SHORT_WIRE_RUN)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	lockout_mode();
-	relay_control(off);
 	return;
 	}
 
-	if(((&ex_temp)->avg) >= OPEN_WIRE)
+	if(((&ex_temp)->avg) >= OPEN_WIRE_RUN)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	lockout_mode();
-	relay_control(off);
 	return;
 	}
 
 	if(((&ex_temp)->avg) <= HOT_TEMP)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	lockout_mode();
-	relay_control(off);
 	return;
 	}
 
 	if(((&ex_temp)->avg) >= COLD_TEMP)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	lockout_mode();
-	relay_control(off);
 	return;
 	}
 
@@ -451,6 +438,173 @@ void thermal_management(void)
 	}
 }
 
+void start_up_procedure(void)
+{
+	uint8_t action_taken = 0U;
+	uint8_t stable_count = 0U;
+/*Fist loop through mark the system time and set the DAC to half*/
+/*Trigger the flag so this block does not execute until another start-up is*/
+/*Executed*/
+if((start_up_flags & FIRST_LAP_FLAG) == 0U)
+{
+secs_start = (((system_time)->time_nums)[seconds]);
+dac_set(2047U);
+start_up_flags = FIRST_LAP_FLAG;
+}
+/*Other wise do the rest of the start-up procedure*/
+else
+{
+/*if we have waited one second check*/
+/*This block executes every "single - loop" of the start up procedure*/
+/*After the first seconds has transpired */
+if((((system_time)->time_nums)[seconds]) != secs_start )
+{
+	/*Ensure the temp sampling has initialized*/
+	/*If not wait another second*/
+	if(system_flags & TEMP_INIT_FLAG)
+	{secs_start = (((system_time)->time_nums)[seconds]); return;}
+
+
+	/*Ensure the voltage on the therm wire is at the appropriate level*/
+	/*If no error trigger the start-up flags to advance sequence*/
+	/*If there is an error Trigger the thermal/wire error flag and end the start-up*/
+    if(((&ex_temp)->avg) > SHORT_WIRE)
+	{start_up_flags |= NO_SHORT_FLAG;}
+    else
+    {
+    start_up_flags &= 0U;
+    system_flags |= THERM_WIRE_ERR_FLAG;
+    system_flags &= ~(START_UP_FLAG);
+    return;
+    }
+    if(((&ex_temp)->avg) < OPEN_WIRE)
+    {start_up_flags |= NO_OPEN_FLAG;}
+    else
+     {
+     start_up_flags &= 0U;
+     system_flags |= THERM_WIRE_ERR_FLAG;
+     system_flags &= ~(START_UP_FLAG);
+     return;
+     }
+}
+
+/*No thermal error flags have been executed*/
+if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLAG))
+{
+	/*If the relay is not enabled then enable it set a delay*/
+	if((start_up_flags & RELAY_ENABLE_FLAG) == 0U)
+	{
+	relay_control(on);
+	start_up_flags |= RELAY_ENABLE_FLAG;
+	stup_action = ((system_time)->time_nums)[millis] + RELAY_DELAY;
+		if(stup_action >= 1000U)
+		{stup_action -= 1000U;}
+	}
+	/*Wait for the Delay if the relay engaged flag not set then set*/
+	else
+	{
+	 if((start_up_flags & RELAY_ENGAGE_FLAG) == 0U)
+	 {
+     if((((system_time)->time_nums)[millis]) == stup_action)
+     {start_up_flags |= RELAY_ENGAGE_FLAG;}
+	 }
+	}
+
+    /*If the relay is engaged*/
+	/*Run the ramp up procedure*/
+	if(start_up_flags & RELAY_ENGAGE_FLAG)
+	{
+		/*No PMIC actions taken*/
+		if((start_up_flags & PMIC_STUP_FLAG) == 0U)
+		{
+		/*Set duty cycle*/
+		set_duty_cycle(3U);
+		/*Determine to buck or boost*/
+		if(((&iv_channel)->avg) < exp_ov)
+		{boost_mode();}
+		else
+		{buck_mode();}
+		/*Set the offset for the current sensor*/
+		cs_offset = ((&cs_channel)->avg) - 40U;
+		/*Delay setup for in between actions*/
+		stup_action = (((system_time)->time_nums)[millis])+STUP_DELAY;
+			if(stup_action >= 1000U)
+			{stup_action -= 1000U;}
+		/*Trigger the flag to advance the procedure*/
+        start_up_flags |= PMIC_STUP_FLAG;
+		}
+		else
+		{
+			/*If delay reached*/
+            if((((system_time)->time_nums)[millis]) == stup_action)
+            {
+            /*If the voltage is less than the over voltage protection*/
+            /*If the current less than the desired target*/
+            /*Increase the duty cycle (if current diff significant increase by more)*/
+			if(((&ov_channel)->avg) < (v_ovp - VOLTAGE_HYS))
+			{
+			if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
+			{
+			if((i_target - (((&cs_channel)->avg)-cs_offset)) > 100U)
+			{duty_cycle_increment(15U);action_taken = 1U;}
+			else
+			{duty_cycle_increment(1U);action_taken = 1U;}
+			}
+
+			if(((&cs_channel)->avg) < cs_offset)
+			{duty_cycle_increment(15U);action_taken = 1U;}
+			}
+
+			/*If voltage or current to high decrease the duty cycle*/
+			if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
+			{duty_cycle_decrement(1U);action_taken = 1U;}
+			if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
+			{duty_cycle_decrement(1U);action_taken = 1U;}
+
+			/*Action taken in the startup procedure mark for delay*/
+            if(action_taken)
+            {
+            stup_action = (((system_time)->time_nums)[millis])+STUP_DELAY;
+            	if(stup_action >= 1000U)
+            	{stup_action -= 1000U;}
+            }
+            /*This procedure has ran 100U times and taken no action system is stable*/
+            /*end the start up procedure proceed with regular operation*/
+            else
+            {
+            if((start_up_flags & INPUT_ERR_FLAG) == 0U)
+            {
+            stup_action = (((system_time)->time_nums)[millis])+STUP_DELAY;
+            stable_count += 1U;
+            if(stable_count >= 100U)
+            {
+            system_flags &= ~(START_UP_FLAG);
+            system_flags |= PMIC_ENABLE_FLAG;
+            }
+            }
+            }
+
+            /* The input voltage has dropped below a 11 V then reduce
+             * the current and wait for the voltage to come back up*/
+            if(((&iv_channel)->avg) < (INPUT_BAD - VOLTAGE_HYS))
+            {
+            start_up_flags |= (INPUT_ERR_FLAG|CURRENT_MOD_FLAG);
+            hs_i_target = (((&cs_channel)->avg)-cs_offset)-25U;
+            i_target = hs_i_target;
+            }
+
+            if(((&iv_channel)->avg) > (INPUT_BAD + VOLTAGE_HYS))
+            {start_up_flags &= ~(INPUT_ERR_FLAG);}
+
+            }
+        }
+
+	}
+
+}
+
+}
+}
 
 
 void relay_control(uint8_t on_off)
@@ -678,6 +832,9 @@ if(string_compare(cmd,&tbankrpt))
 if(string_compare(cmd,&flagrpt))
 {flagreport();}
 
+if(string_compare(cmd,&stuprpt))
+{stupreport();}
+
 if(string_compare(cmd,&flagclr))
 {flagclear();}
 
@@ -688,7 +845,7 @@ if(string_compare(cmd,&temprpt))
 {tempreport();}
 
 if(string_compare(cmd,&dcp))
-{duty_cycle_increment();uart1_transmit(&money);}
+{duty_cycle_increment(1U);uart1_transmit(&money);}
 
 if(string_compare(cmd,&buck))
 {buck_mode();uart1_transmit(&money);}
@@ -1156,6 +1313,16 @@ void tbankreport(void)
 	uart1_transmit(&cli_return);
 }
 
+void stupreport(void)
+{
+	uint32_t temp;
+
+	temp = start_up_flags;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+}
 
 void dacreport(void)
 {

@@ -69,8 +69,9 @@ void passthru_mode(void);
 uint8_t mode_check(void);
 uint8_t dc_check(void);
 
-void duty_cycle_increment(void);
-void duty_cycle_decrement(void);
+void duty_cycle_increment(uint32_t step);
+void duty_cycle_decrement(uint32_t step);
+
 void set_duty_cycle(uint8_t dcn);
 
 
