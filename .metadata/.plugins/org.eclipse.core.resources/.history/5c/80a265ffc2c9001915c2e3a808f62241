@@ -175,7 +175,6 @@ void system_ptr_config(void)
 
 	system_flags = 0U;
 	system_flags |= (ADC_INIT_FLAG|TEMP_INIT_FLAG|PMIC_INIT_FLAG|START_UP_FLAG);
-	start_up_flags = 0U;
 	adc_conversion_channel = 1U;
 	cs_offset = 0U;
 	v_ovp = DEFAULT_OVP;
@@ -184,7 +183,8 @@ void system_ptr_config(void)
 	v_uvp = DEFAULT_UVP;
 	exp_ov = EXP_VOLTAGE;
 	wire_error_count = 0U;
-	stable_count = 0U;
+	first_lap = 0U;
+
 
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
@@ -580,7 +580,6 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             stable_count += 1U;
             if(stable_count >= 100U)
             {
-            dac_set(4095U);
             system_flags &= ~(START_UP_FLAG);
             system_flags |= PMIC_ENABLE_FLAG;
             }

@@ -580,7 +580,6 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             stable_count += 1U;
             if(stable_count >= 100U)
             {
-            dac_set(4095U);
             system_flags &= ~(START_UP_FLAG);
             system_flags |= PMIC_ENABLE_FLAG;
             }
