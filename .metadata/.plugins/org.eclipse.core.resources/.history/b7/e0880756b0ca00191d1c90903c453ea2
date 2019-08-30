@@ -106,11 +106,13 @@ uint16_t cs_offset;
 uint16_t v_ovp;
 uint16_t i_target;
 uint16_t hs_i_target;
+uint16_t us_i_target;
 uint16_t v_uvp;
 uint16_t exp_ov;
 
 
 uint16_t wire_error_count;
+uint32_t check_delay;
 uint16_t temp_sample_level;
 uint16_t wire_sample_level;
 uint16_t last_temp;
@@ -185,6 +187,8 @@ void system_ptr_config(void)
 	exp_ov = EXP_VOLTAGE;
 	wire_error_count = 0U;
 	stable_count = 0U;
+	temp_sample_level = 4095U;
+	wire_sample_level = 2047U;
 
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
@@ -270,30 +274,60 @@ last_tsamp = (((system_time)->time_nums)[millis]);
 
 void pmic_management(void)
 {
+/*Check the current mode*/
 uint8_t mc = mode_check();
 
+/*Wait for adc initialization*/
 if(system_flags & ADC_INIT_FLAG)
 {return;}
 
+/*Wait for temperature initialization*/
 if(system_flags & TEMP_INIT_FLAG)
 {return;}
 
+/*If a thermal wire error flag is popped*/
 if(system_flags & THERM_WIRE_ERR_FLAG)
 {
+/*Ensure that the DAC is set
+ * low relay is disengaged
+ * and the mosfets are in lockout mode*/
 dac_set(0U);
 lockout_mode();
 relay_control(off);
+/*If the system has the PMIC flag enabled disable it*/
 if(system_flags & PMIC_ENABLE_FLAG)
 {system_flags &= ~(PMIC_ENABLE_FLAG);}
+
+/*If the number of failed startups is less than 10*/
+if(wire_error_count < 10U)
+{
+/*Delay in between attempting start_ups*/
+/*If the delay is reached then attempt a start up*/
+check_delay+=1U;
+if(check_delay >= 25000U)
+{
+system_flags &=	~(THERM_WIRE_ERR_FLAG);
+start_up_flags &= 0U;
+system_flags |= START_UP_FLAG;
+check_delay = 0U;
+}
+}
 return;
 }
 
+/*Input Error checking and procedure*/
+
+
+/*If the no errors and system enabled*/
 if(system_flags & PMIC_ENABLE_FLAG)
 {
 
+/*Delay reached for PMIC actions*/
 if((system_flags & PMIC_ACTION_FLAG) == 0U)
 {
-
+/*If the over voltage condition not reached*/
+/*AND the target current is not reached*/
+/*Increment the duty cycle*/
 if(((&ov_channel)->avg) < (v_ovp - VOLTAGE_HYS))
 {
 if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
@@ -305,12 +339,13 @@ if(((&cs_channel)->avg) < cs_offset)
 
 }
 
+/*If over voltage or over current decrement duty cycle*/
 if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
 {duty_cycle_decrement(1U);}
 if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
 {duty_cycle_decrement(1U);}
 
-
+//Delay in between actions regardless
 system_flags |= PMIC_ACTION_FLAG;
 last_pmic_action = (((system_time)->time_nums)[millis])+PMIC_DELAY;
 
@@ -318,6 +353,7 @@ if(last_pmic_action >= 1000U)
 {last_pmic_action -= 1000U;}
 
 }
+/*Delay procedure for PMIC actions*/
 else
 {
 if((((system_time)->time_nums)[millis]) == last_pmic_action)
@@ -327,6 +363,7 @@ if((((system_time)->time_nums)[millis]) == last_pmic_action)
 }
 
 
+//If the PMIC not enabled then lock out the mosfets
 else
 {
 system_flags &= ~(PMIC_ACTION_FLAG);
@@ -341,6 +378,7 @@ else
 void thermal_management(void)
 {
 
+	/*Check for extreme conditions*/
 	if((system_flags & PMIC_ENABLE_FLAG) == 0U)
 	{return;}
 
@@ -368,14 +406,21 @@ void thermal_management(void)
 	return;
 	}
 
+
+     /*No extreme conditions were found proceed with regular thermal management*/
+
+	/*Check to see if the threshold for thermal foldback has been reached*/
 	if((system_flags & THERMAL_CON_FLAG) == 0U)
 	{
 		if(((&ex_temp)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
 			{
 			system_flags |= THERMAL_CON_FLAG;
+			/*Artificially set the last temperature to induce a thermal delta*/
 			last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
 			}
 	}
+	/*If the thermal con flag is popped and temps are below the
+	 * foldback point turn off the thermal control*/
 	else
 	{
 		if(((&ex_temp)->avg) > (FOLDBACK_TEMP + THERMAL_HYS))
@@ -383,40 +428,51 @@ void thermal_management(void)
 	}
 
 
+	/*If the thermal control flag is set*/
 	if(system_flags & THERMAL_CON_FLAG)
 	{
+		/*If the delay end marker is turned off*/
 		if((system_flags & THERMAL_ACTION_FLAG) == 0U)
 		{
+		/*If the light is getting hotter*/
 	    if(((&ex_temp)->avg) < last_temp)
 	    {
+	    /*Examine the derivative to determine if enough thermal change has occured
+	     *that the light requires a reduction in power*/
 	    pl = last_temp - ((&ex_temp)->avg);
 	    if(pl > THERMAL_MAX_DELTA)
 	    {
+	    /*Reduction in power*/
 	    if(i_target <= 30)
-	    {i_target = 0U;}
+	    {i_target = 40U;}
 	    else
 	    {i_target -= 25U;}
-	    sendcp(2U);
+	    /*Save the current temperature as the last temperature*/
 	    last_temp = ((&ex_temp)->avg);
 	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
 
+	    /*Numbers management*/
 	    if(last_therm_action >= 1000U)
 	    {last_therm_action -= 1000U;}
 
+	    /*Trigger the thermal action flag */
 	    system_flags |= THERMAL_ACTION_FLAG;
 	    }
 	    }
 
+	    /*If the temperature has risen then */
 	    if(((&ex_temp)->avg) > last_temp)
 	    {
 	    pl =((&ex_temp)->avg) - last_temp;
 	    if(pl > THERMAL_MAX_DELTA)
 	    {
-	    if(i_target >= (hs_i_target - CURRENT_HYS))
+	    i_target += 25U;
+
+	    if(i_target > (hs_i_target))
 	    {i_target = hs_i_target;}
-	    else
-	    {i_target += 25U;}
-	    sendcp(1U);
+
+	    if(i_target >= ())
+
 	    last_temp = ((&ex_temp)->avg);
 	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
 
@@ -441,14 +497,14 @@ void thermal_management(void)
 
 void start_up_procedure(void)
 {
-	uint8_t action_taken = 0U;
+uint8_t action_taken = 0U;
 /*Fist loop through mark the system time and set the DAC to half*/
 /*Trigger the flag so this block does not execute until another start-up is*/
 /*Executed*/
 if((start_up_flags & FIRST_LAP_FLAG) == 0U)
 {
 secs_start = (((system_time)->time_nums)[seconds]);
-dac_set(2047U);
+dac_set(wire_sample_level);
 start_up_flags = FIRST_LAP_FLAG;
 }
 /*Other wise do the rest of the start-up procedure*/
@@ -475,6 +531,7 @@ if((((system_time)->time_nums)[seconds]) != secs_start )
     start_up_flags &= 0U;
     system_flags |= THERM_WIRE_ERR_FLAG;
     system_flags &= ~(START_UP_FLAG);
+    wire_error_count += 1U;
     return;
     }
     if(((&ex_temp)->avg) < OPEN_WIRE)
@@ -484,6 +541,7 @@ if((((system_time)->time_nums)[seconds]) != secs_start )
      start_up_flags &= 0U;
      system_flags |= THERM_WIRE_ERR_FLAG;
      system_flags &= ~(START_UP_FLAG);
+     wire_error_count += 1U;
      return;
      }
 }
@@ -580,6 +638,7 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             stable_count += 1U;
             if(stable_count >= 100U)
             {
+            dac_set(temp_sample_level);
             system_flags &= ~(START_UP_FLAG);
             system_flags |= PMIC_ENABLE_FLAG;
             }
@@ -890,7 +949,8 @@ if(string_compare(cmd,&dacrpt))
 
 if(string_compare(cmd,&drven))
 {
-system_flags |= PMIC_ENABLE_FLAG;
+start_up_flags &= 0U;
+system_flags |= START_UP_FLAG;
 uart1_transmit(&money);
 }
 

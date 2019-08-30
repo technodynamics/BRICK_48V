@@ -135,7 +135,7 @@
 #define RELAY_PIN   ((1U)<<(7U))
 #define RELAY_DELAY  500U
 #define STUP_DELAY   10U
-
+#define WIRE_ERR_DELAY 200000U
 
 #define off 0U
 #define on 1U

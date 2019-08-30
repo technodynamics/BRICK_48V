@@ -116,7 +116,7 @@
 
 #define HOT_TEMP      720U
 #define COLD_TEMP     2470U
-#define FOLDBACK_TEMP 1600U
+#define FOLDBACK_TEMP 980U
 //980 ^^
 
 #define INPUT_BAD   875U

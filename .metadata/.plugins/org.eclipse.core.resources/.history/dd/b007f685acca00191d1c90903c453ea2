@@ -111,6 +111,7 @@ uint16_t exp_ov;
 
 
 uint16_t wire_error_count;
+
 uint16_t temp_sample_level;
 uint16_t wire_sample_level;
 uint16_t last_temp;
@@ -123,6 +124,7 @@ uint32_t first_lap;
 uint32_t secs_start;
 uint32_t stup_action;
 
+uint8_t stable_count;
 
 
 uint32_t dbg1;
@@ -174,6 +176,7 @@ void system_ptr_config(void)
 
 	system_flags = 0U;
 	system_flags |= (ADC_INIT_FLAG|TEMP_INIT_FLAG|PMIC_INIT_FLAG|START_UP_FLAG);
+	start_up_flags = 0U;
 	adc_conversion_channel = 1U;
 	cs_offset = 0U;
 	v_ovp = DEFAULT_OVP;
@@ -182,8 +185,9 @@ void system_ptr_config(void)
 	v_uvp = DEFAULT_UVP;
 	exp_ov = EXP_VOLTAGE;
 	wire_error_count = 0U;
-	first_lap = 0U;
-
+	stable_count = 0U;
+	temp_sample_level = 4095U;
+	wire_sample_level = 2047U;
 
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
@@ -440,15 +444,14 @@ void thermal_management(void)
 
 void start_up_procedure(void)
 {
-	uint8_t action_taken = 0U;
-	uint8_t stable_count = 0U;
+uint8_t action_taken = 0U;
 /*Fist loop through mark the system time and set the DAC to half*/
 /*Trigger the flag so this block does not execute until another start-up is*/
 /*Executed*/
 if((start_up_flags & FIRST_LAP_FLAG) == 0U)
 {
 secs_start = (((system_time)->time_nums)[seconds]);
-dac_set(2047U);
+dac_set(wire_sample_level);
 start_up_flags = FIRST_LAP_FLAG;
 }
 /*Other wise do the rest of the start-up procedure*/
@@ -475,6 +478,7 @@ if((((system_time)->time_nums)[seconds]) != secs_start )
     start_up_flags &= 0U;
     system_flags |= THERM_WIRE_ERR_FLAG;
     system_flags &= ~(START_UP_FLAG);
+    wire_error_count += 1U;
     return;
     }
     if(((&ex_temp)->avg) < OPEN_WIRE)
@@ -576,10 +580,11 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             {
             stup_action = (((system_time)->time_nums)[millis])+STUP_DELAY;
             	if(stup_action >= 1000U)
-            	{stup_action -= 1000U;
+            	{stup_action -= 1000U;}
             stable_count += 1U;
             if(stable_count >= 100U)
             {
+            dac_set(temp_sample_level);
             system_flags &= ~(START_UP_FLAG);
             system_flags |= PMIC_ENABLE_FLAG;
             }
