@@ -119,8 +119,8 @@
 #define FOLDBACK_TEMP 980U
 //980 ^^
 
-#define INPUT_BAD   800U
-#define INPUT_DEAD  650U
+#define INPUT_BAD   875U
+
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
@@ -134,7 +134,7 @@
 
 #define RELAY_PIN   ((1U)<<(7U))
 #define RELAY_DELAY  500U
-#define STUP_DELAY   50U
+#define STUP_DELAY   10U
 #define WIRE_ERR_DELAY 200000U
 
 #define off 0U

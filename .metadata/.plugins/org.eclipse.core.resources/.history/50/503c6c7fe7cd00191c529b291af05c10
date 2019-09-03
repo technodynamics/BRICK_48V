@@ -317,7 +317,7 @@ return;
 }
 
 /*Input Error checking and procedure*/
-if(((&iv_channel)->avg) < (INPUT_DEAD - VOLTAGE_HYS))
+if(((&iv_channel)->avg) < (INPUT_DEAD - VOLTAGE_HYS));
 {
 dac_set(0U);
 lockout_mode();
@@ -325,6 +325,7 @@ relay_control(off);
 
 system_flags = 0U;
 wire_error_count = 0U;
+
 
 }
 

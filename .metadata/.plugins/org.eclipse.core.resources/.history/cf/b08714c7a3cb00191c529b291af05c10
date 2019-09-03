@@ -317,16 +317,6 @@ return;
 }
 
 /*Input Error checking and procedure*/
-if(((&iv_channel)->avg) < (INPUT_DEAD - VOLTAGE_HYS))
-{
-dac_set(0U);
-lockout_mode();
-relay_control(off);
-
-system_flags = 0U;
-wire_error_count = 0U;
-
-}
 
 
 /*If the no errors and system enabled*/
@@ -398,28 +388,24 @@ void thermal_management(void)
 	if(((&ex_temp)->avg) <= SHORT_WIRE_RUN)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	wire_error_count+=1U;
 	return;
 	}
 
 	if(((&ex_temp)->avg) >= OPEN_WIRE_RUN)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	wire_error_count+=1U;
 	return;
 	}
 
 	if(((&ex_temp)->avg) <= HOT_TEMP)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	wire_error_count+=1U;
 	return;
 	}
 
 	if(((&ex_temp)->avg) >= COLD_TEMP)
 	{
 	system_flags |= THERM_WIRE_ERR_FLAG;
-	wire_error_count+=1U;
 	return;
 	}
 

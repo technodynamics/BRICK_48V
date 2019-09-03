@@ -99,14 +99,14 @@
 
 
 #define DEFAULT_OVP      3100U
-#define DEFAULT_I_TARGET  750U
+#define DEFAULT_I_TARGET  500U
 #define DEFAULT_UVP       720U
 
 #define DEFAULT_MAX_CURRENT 2295U
 #define DEFAULT_MAX_VOLTAGE 3225U
 
 #define EXP_CURRENT 500U
-#define EXP_VOLTAGE 1550U
+#define EXP_VOLTAGE 3000U
 
 #define SHORT_WIRE_RUN 400U
 #define OPEN_WIRE_RUN  2485U
@@ -119,8 +119,8 @@
 #define FOLDBACK_TEMP 980U
 //980 ^^
 
-#define INPUT_BAD   800U
-#define INPUT_DEAD  650U
+#define INPUT_BAD   875U
+
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
@@ -134,7 +134,7 @@
 
 #define RELAY_PIN   ((1U)<<(7U))
 #define RELAY_DELAY  500U
-#define STUP_DELAY   50U
+#define STUP_DELAY   10U
 #define WIRE_ERR_DELAY 200000U
 
 #define off 0U

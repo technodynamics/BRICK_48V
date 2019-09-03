@@ -120,7 +120,7 @@
 //980 ^^
 
 #define INPUT_BAD   800U
-#define INPUT_DEAD  650U
+
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
