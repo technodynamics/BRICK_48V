@@ -14,7 +14,8 @@ uint32_t arr_val;
 uint8_t dc;
 uint32_t dc_val;
 uint32_t percent;
-uint32_t delay_time;
+uint32_t shifting_stage;
+uint8_t up_down;
 
 uint8_t mode;
 
@@ -60,7 +61,8 @@ lockout_mode();
 ((TIM1)->ARR) = arr_val;
 percent = ((arr_val/100U)+1U);
 dc = 0;
-
+shifting_stage = 0U;
+up_down = 0U;
 /*Connect outputs*/
 ((TIM1)->CCER) |= ((1U)<<(CC1_SHIFT));
 ((TIM1)->CCER) |= ((1U)<<(CC2_SHIFT));
@@ -161,6 +163,25 @@ uint8_t mode_check(void)
 uint8_t dc_check(void)
 {return (dc);}
 
+void shift_action(void)
+{
+if(up_down == 1U)
+{
+if((shifting_stage % 2U) == 0U)
+{duty_cycle_increment(1U);}
+else
+{duty_cycle_decrement(1U);}
+}
+
+if(up_down ==2U)
+{
+	if((shifting_stage % 2U) == 0U)
+	{duty_cycle_decrement(1U);}
+	else
+	{duty_cycle_increment(1U);}
+}
+
+}
 
 
 void duty_cycle_increment(uint32_t step)
@@ -177,6 +198,22 @@ if(mode == BOOST_MODE)
 
 if(mode == BUCK_MODE)
 {((TIM1)->CCR3) = (dc_val);}
+
+switch(shifting_stage)
+{
+case 0U: shifting_stage += 1U; ((TIM1)->DIER) |=  UIE; up_down = 1U; break;
+case 1U: shifting_stage += 1U; break;
+case 2U: shifting_stage += 1U; break;
+case 3U: shifting_stage += 1U; break;
+case 4U: shifting_stage += 1U; break;
+case 5U: shifting_stage += 1U; break;
+case 6U: shifting_stage += 1U; break;
+case 7U: shifting_stage += 1U; break;
+case 8U: shifting_stage += 1U; break;
+case 9U: shifting_stage += 1U; break;
+case 10U: shifting_stage = 0U;((TIM1)->DIER) &= ~(UIE);  up_down = 0U;break;
+}
+
 
 }
 
@@ -195,6 +232,21 @@ void duty_cycle_decrement(uint32_t step)
 
 	if(mode == BUCK_MODE)
 	{((TIM1)->CCR3) = (dc_val);}
+
+	switch(shifting_stage)
+	{
+	case 0U: shifting_stage += 1U; ((TIM1)->DIER) |=  UIE; up_down = 2U; break;
+	case 1U: shifting_stage += 1U; break;
+	case 2U: shifting_stage += 1U; break;
+	case 3U: shifting_stage += 1U; break;
+	case 4U: shifting_stage += 1U; break;
+	case 5U: shifting_stage += 1U; break;
+	case 6U: shifting_stage += 1U; break;
+	case 7U: shifting_stage += 1U; break;
+	case 8U: shifting_stage += 1U; break;
+	case 9U: shifting_stage += 1U; break;
+	case 10U: shifting_stage = 0U;((TIM1)->DIER) &= ~(UIE); break;
+	}
 }
 
 

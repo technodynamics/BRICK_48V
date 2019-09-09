@@ -89,7 +89,7 @@ int main(void)
   /* USER CODE BEGIN SysInit */
   system_io_config();
 
-  uart1_enable();
+  //uart1_enable();
   lptim1_enable();
   adc1_enable();
   tim1_enable(120U);

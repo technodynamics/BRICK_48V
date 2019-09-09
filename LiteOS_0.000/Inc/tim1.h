@@ -14,6 +14,7 @@
 
 #define TIM1_ENABLE 1U
 #define UG          1U
+#define UIE			1U
 
 #define LOCKOUT_MODE 1U
 #define PASSTHRU_MODE 2U
@@ -73,6 +74,8 @@ void duty_cycle_increment(uint32_t step);
 void duty_cycle_decrement(uint32_t step);
 
 void set_duty_cycle(uint8_t dcn);
+void shift_action(void);
+
 
 
 #endif /* TIM2_H_ */

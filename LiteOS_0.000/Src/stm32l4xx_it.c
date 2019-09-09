@@ -96,6 +96,8 @@ driveB(3U,0U);
 
 }
 
+void TIM1_CC_IRQHandler(void)
+{shift_action();}
 
 /**
 * @brief This function handles Non maskable interrupt.

@@ -107,6 +107,7 @@ uint16_t v_ovp;
 uint16_t i_target;
 uint16_t hs_i_target;
 uint16_t us_i_target;
+uint16_t th_i_target;
 uint16_t v_uvp;
 uint16_t exp_ov;
 
@@ -122,10 +123,18 @@ uint32_t last_therm_action;
 uint32_t last_pmic_action;
 
 uint32_t first_lap;
-uint32_t secs_start;
+uint32_t sample_end;
 uint32_t stup_action;
 
 uint8_t stable_count;
+
+uint32_t up_button_dbnc;
+uint32_t down_button_dbnc;
+uint32_t button_delay;
+uint32_t down_button_hold_count;
+uint32_t up_button_hold_count;
+
+uint32_t dim_step;
 
 
 uint32_t dbg1;
@@ -136,23 +145,19 @@ void system_io_config(void)
 /*Enable GPIO Clock*/
 ((RCC)->AHB2ENR) |= (RCC_GPIOB_ENABLE|RCC_GPIOA_ENABLE);
 
-((GPIOB)->MODER) &= (~((IN_MODE)<<(GPIO_3_DSHIFT)));
-((GPIOB)->MODER) |= (((OUT_MODE)<<(GPIO_3_DSHIFT)));
-
-((GPIOB)->MODER) &= (~((IN_MODE)<<(GPIO_4_DSHIFT)));
-((GPIOB)->MODER) |= (((OUT_MODE)<<(GPIO_4_DSHIFT)));
-
-((GPIOA)->MODER) &= (~((IN_MODE)<<(GPIO_15_DSHIFT)));
-((GPIOA)->MODER) |= (((OUT_MODE)<<(GPIO_15_DSHIFT)));
-
 ((GPIOA)->MODER) &= (~((IN_MODE)<<(GPIO_7_DSHIFT)));
 ((GPIOA)->MODER) |= (((OUT_MODE)<<(GPIO_7_DSHIFT)));
 
-((GPIOB)->ODR) &= (~((1U)<<(GPIO_3_SHIFT)));
-((GPIOB)->ODR) &= (~((1U)<<(GPIO_4_SHIFT)));
-((GPIOA)->ODR) &= (~((1U)<<(GPIO_15_SHIFT)));
+((GPIOB)->MODER) &= (~((IN_MODE)<<(GPIO_6_DSHIFT)));
+((GPIOB)->MODER) &= (~((IN_MODE)<<(GPIO_7_DSHIFT)));
 
-relay_control(1U);
+((GPIOB)->PUPDR) |= ((1U)<<(GPIO_6_DSHIFT));
+((GPIOB)->PUPDR) |= ((1U)<<(GPIO_7_DSHIFT));
+
+
+
+relay_control(off);
+
 
 }
 
@@ -184,12 +189,19 @@ void system_ptr_config(void)
 	i_target = DEFAULT_I_TARGET;
 	hs_i_target = DEFAULT_I_TARGET;
 	us_i_target = DEFAULT_I_TARGET;
+	th_i_target = DEFAULT_I_TARGET;
 	v_uvp = DEFAULT_UVP;
 	exp_ov = EXP_VOLTAGE;
 	wire_error_count = 0U;
 	stable_count = 0U;
 	temp_sample_level = 4095U;
 	wire_sample_level = 2047U;
+	up_button_dbnc = 0U;
+	down_button_dbnc = 0U;
+	up_button_hold_count = 0U;
+	down_button_hold_count = 0U;
+    button_delay = (((system_time)->time_nums)[millis]);
+    dim_step = 25U;
 
 
 	ts_cal1 = *((int16_t*)TS_CAL1_PTR);
@@ -218,7 +230,142 @@ if(flags & CMD_EXECUTE)
 cmd = cmd_execute();
 system_ins_search(cmd);
 }
+
+button_managment();
 }
+
+
+void button_managment(void)
+{
+
+if((((system_time)->time_nums)[millis]) != button_delay)
+{
+	up_button_dbnc = up_button_dbnc << 1U;
+	down_button_dbnc = down_button_dbnc << 1U;
+
+	if((((GPIOB)->IDR) & UP_BUTTON) == 0U)
+	{up_button_dbnc |= 1U;}
+	if((((GPIOB)->IDR) & DOWN_BUTTON) == 0U)
+	{down_button_dbnc |= 1U;}
+
+
+	if(up_button_dbnc == BUTTON_PRESSED)
+	{up_button_hold_count = 0U;}
+
+	if(up_button_dbnc == BUTTON_HELD)
+	{
+	up_button_hold_count += 1U;
+
+	if(up_button_hold_count == 50U)
+	{
+	if(us_i_target < (hs_i_target- dim_step))
+	{
+		if(us_i_target < (th_i_target - dim_step))
+		{
+			us_i_target += dim_step;
+			i_target = us_i_target;
+		}
+		else
+		{
+		us_i_target = th_i_target;
+		i_target = th_i_target;
+		}
+	}
+	else
+	{
+	if((system_flags & THERMAL_CON_FLAG) == 0U)
+	{
+	us_i_target = hs_i_target;
+	th_i_target = hs_i_target;
+	i_target = hs_i_target;
+	}
+	}
+    up_button_hold_count = 0U;
+	}
+
+	}
+
+	if(up_button_dbnc == BUTTON_RELEASED)
+	{
+		if(us_i_target < (hs_i_target- dim_step))
+		{
+			if(us_i_target < (th_i_target - dim_step))
+			{
+				us_i_target += dim_step;
+				i_target = us_i_target;
+			}
+			else
+			{
+			us_i_target = th_i_target;
+			i_target = th_i_target;
+			}
+		}
+		else
+		{
+		if((system_flags & THERMAL_CON_FLAG) == 0U)
+		{
+		us_i_target = hs_i_target;
+		th_i_target = hs_i_target;
+		i_target = hs_i_target;
+		}
+		}
+
+	}
+
+
+	if(down_button_dbnc == BUTTON_PRESSED)
+	{down_button_hold_count = 0U;}
+
+	if(down_button_dbnc == BUTTON_HELD)
+	{
+	down_button_hold_count += 1U;
+
+	if(down_button_hold_count == 50U)
+	{
+	if(us_i_target > (cs_offset + dim_step))
+	{
+		   if(us_i_target > i_target)
+		   {us_i_target = i_target;}
+
+			us_i_target -= dim_step;
+			i_target = us_i_target;
+	}
+	else
+	{
+	us_i_target = cs_offset+dim_step;
+	i_target = us_i_target;
+	}
+    down_button_hold_count = 0U;
+	}
+
+	}
+
+    if(down_button_dbnc == BUTTON_RELEASED)
+    {
+    	if(us_i_target > (cs_offset + dim_step))
+    	{
+    	   if(us_i_target > i_target)
+    	   {us_i_target = i_target;}
+
+    	   us_i_target -= dim_step;
+    	   i_target = us_i_target;
+    	}
+    	else
+    	{
+    	us_i_target = cs_offset+dim_step;
+    	i_target = us_i_target;
+    	}
+    }
+
+
+
+	button_delay = (((system_time)->time_nums)[millis]);
+}
+
+
+}
+
+
 
 
 void adc_management(void)
@@ -319,13 +466,6 @@ return;
 /*Input Error checking and procedure*/
 if(((&iv_channel)->avg) < (INPUT_DEAD - VOLTAGE_HYS))
 {
-dac_set(0U);
-lockout_mode();
-relay_control(off);
-
-system_flags = 0U;
-wire_error_count = 0U;
-
 }
 
 
@@ -525,7 +665,9 @@ if((start_up_flags & FIRST_LAP_FLAG) == 0U)
 {
 stable_count = 0U;
 i_target = hs_i_target;
-secs_start = (((system_time)->time_nums)[seconds]);
+sample_end = (((system_time)->time_nums)[seconds]) + 2U;
+if(sample_end >= 60U)
+{sample_end-=60U;}
 dac_set(wire_sample_level);
 start_up_flags = FIRST_LAP_FLAG;
 }
@@ -535,12 +677,17 @@ else
 /*if we have waited one second check*/
 /*This block executes every "single - loop" of the start up procedure*/
 /*After the first seconds has transpired */
-if((((system_time)->time_nums)[seconds]) != secs_start )
+if((((system_time)->time_nums)[seconds]) == sample_end)
 {
 	/*Ensure the temp sampling has initialized*/
 	/*If not wait another second*/
 	if(system_flags & TEMP_INIT_FLAG)
-	{secs_start = (((system_time)->time_nums)[seconds]); return;}
+	{
+	sample_end = (((system_time)->time_nums)[seconds])+2U;
+	if(sample_end >= 60U)
+	{sample_end -= 60U;}
+	return;
+	}
 
 
 	/*Ensure the voltage on the therm wire is at the appropriate level*/

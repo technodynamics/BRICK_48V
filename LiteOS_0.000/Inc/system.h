@@ -122,7 +122,7 @@
 #define INPUT_BAD   800U
 #define INPUT_DEAD  650U
 
-#define CURRENT_HYS       20U
+#define CURRENT_HYS       10U
 #define VOLTAGE_HYS       10U
 #define PMIC_DELAY        100U
 #define THERMAL_HYS		  30U
@@ -163,6 +163,14 @@
 #define INPUT_ERR_FLAG    64U
 #define CURRENT_MOD_FLAG  128U
 
+
+#define UP_BUTTON   ((1U)<<(6U))
+#define DOWN_BUTTON ((1U)<<(7U))
+
+#define BUTTON_PRESSED 0x3FFFFFFF
+#define BUTTON_RELEASED 0xC0000000
+#define BUTTON_HELD 0xFFFFFFFF
+
 typedef struct{
 	uint32_t bin;
 	uint8_t ascii[7];
@@ -196,6 +204,11 @@ void adc_management(void);
 void pmic_management(void);
 void thermal_management(void);
 void start_up_procedure(void);
+
+void button_managment(void);
+
+
+
 
 void tim1report(void);
 void voltreport(void);
