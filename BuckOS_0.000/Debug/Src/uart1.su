@@ -1,0 +1,5 @@
+uart1.c:23:6:uart1_enable	8	static
+uart1.c:67:6:uart1_transmit	12	static
+uart1.c:82:6:uart1_buffer_char	20	static
+uart1.c:111:9:cmd_execute	0	static
+uart1.c:118:9:uart1_get_flags	0	static

@@ -1,0 +1,3 @@
+lptim1.c:15:6:lptim1_enable	0	static
+lptim1.c:39:6:time_increment	0	static
+lptim1.c:76:7:read_time	0	static

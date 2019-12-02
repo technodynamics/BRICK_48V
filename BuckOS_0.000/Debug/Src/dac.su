@@ -1,0 +1,4 @@
+dac.c:15:6:dac_enable	0	static
+dac.c:36:6:dac_up	0	static
+dac.c:45:6:dac_down	0	static
+dac.c:56:6:dac_set	0	static

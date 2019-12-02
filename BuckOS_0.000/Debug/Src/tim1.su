@@ -1,0 +1,13 @@
+tim1.c:99:6:buck_mode	0	static
+tim1.c:119:6:boost_mode	0	static
+tim1.c:137:6:lockout_mode	0	static
+tim1.c:22:6:tim1_enable	16	static
+tim1.c:151:6:passthru_mode	0	static
+tim1.c:165:6:pwm_lock	0	static
+tim1.c:168:6:pwm_unlock	0	static
+tim1.c:173:9:mode_check	0	static
+tim1.c:176:9:dc_check	0	static
+tim1.c:200:6:duty_cycle_increment	0	static
+tim1.c:219:6:duty_cycle_decrement	0	static
+tim1.c:179:6:shift_action	8	static
+tim1.c:252:6:set_duty_cycle	0	static
