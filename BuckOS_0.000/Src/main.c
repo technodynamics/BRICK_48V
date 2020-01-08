@@ -92,7 +92,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
-  //system_io_config();
+  system_io_config();
   lptim1_enable();
   tim1_enable(115U);
   uart1_enable();
@@ -100,8 +100,7 @@ int main(void)
   system_ptr_config();
   dac_enable();
 
-  ((GPIOA)->MODER) &= (~((IN_MODE)<<(GPIO_7_DSHIFT)));
-  ((GPIOA)->MODER) |= (((OUT_MODE)<<(GPIO_7_DSHIFT)));
+
 
   relay_control(off);
 
