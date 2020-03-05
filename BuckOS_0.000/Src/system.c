@@ -205,11 +205,9 @@ void system_ptr_config(void)
     button_delay = (((system_time)->time_nums)[millis]);
     dim_step = 25U;
 
-
 	dac_set(0U);
+
 	((RCC)->AHB2ENR) |= (RCC_GPIOB_ENABLE|RCC_GPIOA_ENABLE);
-
-
 }
 
 uint32_t start_up_check(void)
@@ -346,10 +344,24 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			}
 
 			/*If voltage or current to high decrease the duty cycle*/
-			if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
-			{duty_cycle_decrement(1U);action_taken = 1U;}
 			if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
 			{duty_cycle_decrement(1U);action_taken = 1U;}
+			if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
+			{duty_cycle_decrement(1U);action_taken = 1U;}
+
+
+			if((((&cs_channel)->avg) > i_target - CURRENT_HYS))
+			{
+			if((((&cs_channel)->avg) < i_target + CURRENT_HYS))
+			{
+			if((((&ov_channel)->avg) < EXP_VOLTAGE))
+			{
+			system_flags |= POWER_WIRE_ERR_FLAG;
+		    start_up_flags &= 0U;
+		    system_flags &= ~(START_UP_FLAG);
+		    wire_error_count += 1U;
+			}}}
+
 
 			/*Action taken in the startup procedure mark for delay*/
             if(action_taken)
@@ -378,12 +390,13 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             }
             }
 
-            /* The input voltage has dropped below a 11 V then reduce
+            /* The input voltage has dropped below a XX V then reduce
              * the current and wait for the voltage to come back up*/
             if(((&iv_channel)->avg) < (INPUT_BAD - VOLTAGE_HYS))
             {
             start_up_flags |= (INPUT_ERR_FLAG|CURRENT_MOD_FLAG);
             hs_i_target = (((&cs_channel)->avg)-cs_offset)-25U;
+            duty_cycle_decrement(1U);
             i_target = hs_i_target;
             }
 
@@ -576,7 +589,14 @@ else
 
 }
 
-
+if((((&cs_channel)->avg) > i_target - CURRENT_HYS))
+{
+if((((&cs_channel)->avg) < i_target + CURRENT_HYS))
+{
+if((((&ov_channel)->avg) < EXP_VOLTAGE))
+{
+system_flags |= POWER_WIRE_ERR_FLAG;
+}}}
 
 if(system_flags & AVG_TEMP_FLAG)
 {
@@ -593,12 +613,7 @@ inj_conversion_channel = 1U;
 adc1_inject_conversions();
 last_tsamp = (((system_time)->time_nums)[millis]);
 }
-
 }
-
-
-
-
 
 }
 
@@ -617,7 +632,7 @@ if(system_flags & TEMP_INIT_FLAG)
 {return;}
 
 /*If a thermal wire error flag is popped*/
-if(system_flags & THERM_WIRE_ERR_FLAG)
+if((system_flags & THERM_WIRE_ERR_FLAG) | (system_flags & POWER_WIRE_ERR_FLAG))
 {
 /*Ensure that the DAC is set low
  * relay is disengaged
@@ -637,7 +652,7 @@ if(wire_error_count < 10U)
 check_delay+=1U;
 if(check_delay >= WIRE_ERR_DELAY)
 {
-system_flags &=	~(THERM_WIRE_ERR_FLAG);
+system_flags &=	~(THERM_WIRE_ERR_FLAG|POWER_WIRE_ERR_FLAG);
 start_up_flags &= 0U;
 system_flags |= START_UP_FLAG;
 check_delay = 0U;
@@ -756,9 +771,9 @@ void thermal_management(void)
 	{
 		if(((&ex_temp)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
 			{
-			system_flags |= THERMAL_CON_FLAG;
+			//system_flags |= THERMAL_CON_FLAG;
 			/*Artificially set the last temperature to induce a thermal delta*/
-			last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
+			//last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
 			}
 		system_flags &= ~(THERMAL_ACTION_FLAG);
 	}

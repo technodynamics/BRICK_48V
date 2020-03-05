@@ -147,6 +147,8 @@ void lockout_mode(void)
 	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_EN_SHIFT));
 	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_PWM_SHIFT));
 
+	set_duty_cycle(0U);
+
 }
 void passthru_mode(void)
 {
@@ -251,7 +253,7 @@ void duty_cycle_decrement(uint32_t step)
 
 void set_duty_cycle(uint8_t dcn)
 {
-if(dcn == 0U)
+if(dcn < 0U)
 {return;}
 if(dcn > 99U)
 {return;}

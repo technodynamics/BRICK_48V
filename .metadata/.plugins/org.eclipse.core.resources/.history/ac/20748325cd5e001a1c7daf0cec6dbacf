@@ -346,10 +346,24 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			}
 
 			/*If voltage or current to high decrease the duty cycle*/
-			if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
-			{duty_cycle_decrement(1U);action_taken = 1U;}
 			if((((&cs_channel)->avg)-cs_offset) > (i_target+CURRENT_HYS))
 			{duty_cycle_decrement(1U);action_taken = 1U;}
+			if(((&ov_channel)->avg) > (v_ovp+VOLTAGE_HYS))
+			{duty_cycle_decrement(1U);action_taken = 1U;}
+
+
+			if((((&cs_channel)->avg) > i_target - CURRENT_HYS))
+			{
+			if((((&cs_channel)->avg) < i_target + CURRENT_HYS))
+			{
+			if((((&ov_channel)->avg) < EXP_VOLTAGE))
+			{
+			system_flags |= POWER_WIRE_ERR_FLAG;
+		    start_up_flags &= 0U;
+		    system_flags &= ~(START_UP_FLAG);
+		    wire_error_count += 1U;
+			}}}
+
 
 			/*Action taken in the startup procedure mark for delay*/
             if(action_taken)
@@ -576,6 +590,20 @@ else
 
 }
 
+if((((&cs_channel)->avg) > i_target - CURRENT_HYS))
+{
+if((((&cs_channel)->avg) < i_target + CURRENT_HYS))
+{
+if((((&ov_channel)->avg) < EXP_VOLTAGE))
+{
+system_flags |= POWER_WIRE_ERR_FLAG;
+}
+}
+}
+
+
+
+
 
 
 if(system_flags & AVG_TEMP_FLAG)
@@ -617,7 +645,7 @@ if(system_flags & TEMP_INIT_FLAG)
 {return;}
 
 /*If a thermal wire error flag is popped*/
-if(system_flags & THERM_WIRE_ERR_FLAG)
+if((system_flags & THERM_WIRE_ERR_FLAG) | (system_flags & POWER_WIRE_ERR_FLAG))
 {
 /*Ensure that the DAC is set low
  * relay is disengaged
@@ -706,7 +734,7 @@ system_flags &= ~(PMIC_ACTION_FLAG);
 if(mc == LOCKOUT_MODE)
 {return;}
 else
-{/*lockout_mode();*/}
+{lockout_mode();}
 }
 
 }
