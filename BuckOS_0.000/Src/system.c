@@ -350,16 +350,19 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			{duty_cycle_decrement(1U);action_taken = 1U;}
 
 
-			if((((&cs_channel)->avg) > i_target - CURRENT_HYS))
+			if(((&cs_channel)->avg) > cs_offset)
 			{
-			if((((&cs_channel)->avg) < i_target + CURRENT_HYS))
+			if(((((&cs_channel)->avg)-cs_offset) > (i_target - CURRENT_HYS)))
 			{
-			if((((&ov_channel)->avg) < EXP_VOLTAGE))
+			if((((&ov_channel)->new_samp) < EXP_VOLTAGE))
 			{
-			system_flags |= POWER_WIRE_ERR_FLAG;
+		    lockout_mode();
 		    start_up_flags &= 0U;
+			start_up_flags |= POWER_SHORT_FLAG;
+			system_flags |= POWER_WIRE_ERR_FLAG;
 		    system_flags &= ~(START_UP_FLAG);
 		    wire_error_count += 1U;
+		    return;
 			}}}
 
 
@@ -589,12 +592,14 @@ else
 
 }
 
-if((((&cs_channel)->avg) > i_target - CURRENT_HYS))
+if((system_flags & START_UP_FLAG) == 0U)
 {
-if((((&cs_channel)->avg) < i_target + CURRENT_HYS))
+if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS))
 {
-if((((&ov_channel)->avg) < EXP_VOLTAGE))
+if((((&ov_channel)->new_samp) < EXP_VOLTAGE))
 {
+lockout_mode();
+relay_control(off);
 system_flags |= POWER_WIRE_ERR_FLAG;
 }}}
 
@@ -1104,14 +1109,14 @@ if(string_compare(cmd,&dcp))
 if(string_compare(cmd,&buck))
 {buck_mode();uart1_transmit(&money);}
 
-if(string_compare(cmd,&boost))
-{boost_mode();uart1_transmit(&money);}
+//if(string_compare(cmd,&boost))
+//{boost_mode();uart1_transmit(&money);}
 
 if(string_compare(cmd,&lock))
 {lockout_mode();uart1_transmit(&money);}
 
-if(string_compare(cmd,&pass))
-{passthru_mode();uart1_transmit(&money);}
+//if(string_compare(cmd,&pass))
+//{passthru_mode();uart1_transmit(&money);}
 
 if(dc_search(cmd))
 {uart1_transmit(&money);}
