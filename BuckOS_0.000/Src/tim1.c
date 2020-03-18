@@ -93,25 +93,20 @@ void buck_mode(void)
 		((TIM1)->CCMR2) &= 0U;
 		((TIM1)->CCMR2) |= (((1U)<<(CC3PE))|((1U)<<(CC4PE)));
 		((TIM1)->CCMR2) |= ((PWM_MODE_1)<<(BUCK_PWM_SHIFT));
-		((GPIOA)->ODR)  |= ((1U)<<(GPIO_11_SHIFT));
-
-
-
-
 }
 
 void lockout_mode(void)
 {
-	((GPIOA)->ODR)  &= ~(((1U)<<(GPIO_11_SHIFT)));
 
+	((GPIOA)->ODR) &= ~(((1U)<<(GPIO_11_SHIFT)));
 	((TIM1)->CCMR2) &= 0U;
-    ((TIM1)->CCMR2) |= (((1U)<<(CC3PE))|((1U)<<(CC4PE)));
-	((TIM1)->CCMR2) |= ((LOW_MODE)<<(BUCK_EN_SHIFT));
+	((TIM1)->CCMR2) |= (((LOW_MODE)<<(BUCK_EN_SHIFT))|((1U)<<(CC3PE))|((1U)<<(CC4PE)));
+    ((TIM1)->EGR) |= UG;
+    while(((GPIOA)->IDR) & ((1U)<<(GPIO_10_SHIFT))){;}
+    ((GPIOA)->ODR) |= (((1U)<<(GPIO_11_SHIFT)));
 
 	set_duty_cycle(0U);
 	mode = LOCKOUT_MODE;
-
-
 }
 
 
@@ -131,16 +126,13 @@ uint8_t dc_check(void)
 
 void duty_cycle_increment(uint32_t step)
 {
-
-
 dc_val+=step;
-if(dc_val >= (arr_val - 1U))
-{dc_val = (arr_val - 1U);}
+if(dc_val >= (arr_val - 10U))
+{dc_val = (arr_val - 10U);}
 dc = dc_val/percent;
 
 if(mode == BUCK_MODE)
 {((TIM1)->CCR3) = (dc_val);}
-
 
 }
 

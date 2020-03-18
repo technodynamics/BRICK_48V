@@ -567,7 +567,7 @@ if((((system_time)->time_nums)[millis]) != button_delay)
 
 void adc_management(void)
 {
-
+//if we need to average the ADC samples
 if(system_flags & AVG_BANKS_FLAG)
 {
 	avg_samp_bank(&cs_channel);
@@ -578,6 +578,8 @@ if(system_flags & AVG_BANKS_FLAG)
 }
 else
 {
+	//If there is no On Going Conversion
+	//Set conversion Channel and intiate conversions
 	if((system_flags & ADC_CONV_FLAG) == 0U)
 	{
 	adc_conversion_channel = 1U;
@@ -586,23 +588,22 @@ else
 	}
 	else
 	{
+	//if reached end of conversions
 	if(adc_conversion_channel == 4U)
 	{system_flags &= ~(ADC_CONV_FLAG);}
 	}
 
 }
 
-if((system_flags & START_UP_FLAG) == 0U)
-{
-if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS))
-{
-if((((&ov_channel)->new_samp) < EXP_VOLTAGE))
-{
-lockout_mode();
-relay_control(off);
-system_flags |= POWER_WIRE_ERR_FLAG;
+//short detection
+if((system_flags & START_UP_FLAG) == 0U){
+if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
+if((((&ov_channel)-> new_samp) < EXP_VOLTAGE)){
+	lockout_mode();
+	system_flags |= POWER_WIRE_ERR_FLAG;
 }}}
 
+//If the temperature Sample Banks need to be averaged
 if(system_flags & AVG_TEMP_FLAG)
 {
 avg_samp_bank(&ex_temp);
@@ -611,7 +612,7 @@ system_flags &= ~(AVG_TEMP_FLAG);
 }
 else
 {
-
+//Take one sample every milli second
 if((((system_time)->time_nums)[millis]) != last_tsamp)
 {
 inj_conversion_channel = 1U;
@@ -865,10 +866,17 @@ void thermal_management(void)
 
 void relay_control(uint8_t on_off)
 {
+
 if(on_off)
-{((GPIOA)->ODR) |= RELAY_PIN;}
+{
+((GPIOA)->ODR) |= ((1U)<<(GPIO_11_SHIFT));
+((GPIOA)->ODR) |= RELAY_PIN;
+}
 else
-{((GPIOA)->ODR) &= ~RELAY_PIN;}
+{
+((GPIOA)->ODR)  &= ~(((1U)<<(GPIO_11_SHIFT)));
+((GPIOA)->ODR) &= ~RELAY_PIN;
+}
 }
 
 
