@@ -89,6 +89,8 @@ while((((ADC1)->ISR) & ADC_READY) == 0U){;}
 /*Set Sampling Time on all channels*/
 ((ADC1)->SMPR1) &= 0U;
 ((ADC1)->SMPR2) &= 0U;
+((ADC1)->SMPR1) |= (SMPR1_CONF << 1U);
+((ADC1)->SMPR2) |= (SMPR2_CONF << 1U);
 
 /*Configure the Setup*/
 ((ADC1)->CFGR) |= (AUTO_DELAY);

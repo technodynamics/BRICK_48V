@@ -168,7 +168,7 @@ void system_ptr_config(void)
 	dbg1=0U;
 	dbg2=0U;
 
-	for(sysi = 0U; sysi < 100U; sysi++)
+	for(sysi = 0U; sysi < SAMP_BANK_LENGTH; sysi++)
 	{
 	cs_channel.samples[sysi] = 0U;
 	iv_channel.samples[sysi] = 0U;
@@ -595,13 +595,7 @@ else
 
 }
 
-//short detection
-if((system_flags & START_UP_FLAG) == 0U){
-if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
-if((((&ov_channel)-> new_samp) < EXP_VOLTAGE)){
-	lockout_mode();
-	system_flags |= POWER_WIRE_ERR_FLAG;
-}}}
+
 
 //If the temperature Sample Banks need to be averaged
 if(system_flags & AVG_TEMP_FLAG)
@@ -942,14 +936,14 @@ else
 void avg_samp_bank(SAMP_BANK* in)
 {
 	avg_dummy = 0U;
-	for(sysi=0U; sysi<199U; sysi++)
+	for(sysi=0U; sysi<SAMP_BANK_LENGTH; sysi++)
 	{
 	((in)->samples)[sysi] = ((in)->samples)[sysi+1U];
 	avg_dummy += ((in)->samples)[sysi];
 	}
 	avg_dummy += ((in)->new_samp);
-	((in)->samples)[199U] = ((in)->new_samp);
-	((in)->avg) = (avg_dummy/200U);
+	((in)->samples)[(SAMP_BANK_LENGTH-1U)] = ((in)->new_samp);
+	((in)->avg) = (avg_dummy/SAMP_BANK_LENGTH);
 }
 
 
@@ -1013,6 +1007,15 @@ default:return;
 
 inj_conversion_channel++;
 }
+
+
+//short detection
+if((system_flags & START_UP_FLAG) == 0U){
+if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
+if((((&ov_channel)-> new_samp) < EXP_VOLTAGE)){
+	lockout_mode();
+	system_flags |= POWER_WIRE_ERR_FLAG;
+}}}
 
 if((ex_sample_count > 100U) && (in_sample_count > 100U))
 {system_flags &= ~(TEMP_INIT_FLAG);}

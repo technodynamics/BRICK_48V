@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;BuckOS_0.000&apos;" deleteContents="false" description="Delete resource &apos;BuckOS_0.000&apos;" element1="/BuckOS_0.000" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1585193363105"/>
+</session>
