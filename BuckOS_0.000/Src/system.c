@@ -334,13 +334,13 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
 			{
 			if((i_target - (((&cs_channel)->avg)-cs_offset)) > 100U)
-			{duty_cycle_increment(15U);action_taken = 1U;}
+			{duty_cycle_increment(1U);action_taken = 1U;}
 			else
 			{duty_cycle_increment(1U);action_taken = 1U;}
 			}
 
 			if(((&cs_channel)->avg) < cs_offset)
-			{duty_cycle_increment(15U);action_taken = 1U;}
+			{duty_cycle_increment(1U);action_taken = 1U;}
 			}
 
 			/*If voltage or current to high decrease the duty cycle*/
@@ -357,6 +357,7 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			if((((&ov_channel)->new_samp) < EXP_VOLTAGE))
 			{
 		    lockout_mode();
+		    relay_control(off);
 		    start_up_flags &= 0U;
 			start_up_flags |= POWER_SHORT_FLAG;
 			system_flags |= POWER_WIRE_ERR_FLAG;

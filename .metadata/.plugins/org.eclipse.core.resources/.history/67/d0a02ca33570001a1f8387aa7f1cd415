@@ -334,13 +334,13 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
 			{
 			if((i_target - (((&cs_channel)->avg)-cs_offset)) > 100U)
-			{duty_cycle_increment(15U);action_taken = 1U;}
+			{duty_cycle_increment(1U);action_taken = 1U;}
 			else
 			{duty_cycle_increment(1U);action_taken = 1U;}
 			}
 
 			if(((&cs_channel)->avg) < cs_offset)
-			{duty_cycle_increment(15U);action_taken = 1U;}
+			{duty_cycle_increment(1U);action_taken = 1U;}
 			}
 
 			/*If voltage or current to high decrease the duty cycle*/
@@ -595,13 +595,7 @@ else
 
 }
 
-//short detection
-if((system_flags & START_UP_FLAG) == 0U){
-if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
-if((((&ov_channel)-> new_samp) < EXP_VOLTAGE)){
-	lockout_mode();
-	system_flags |= POWER_WIRE_ERR_FLAG;
-}}}
+
 
 //If the temperature Sample Banks need to be averaged
 if(system_flags & AVG_TEMP_FLAG)
@@ -1013,6 +1007,15 @@ default:return;
 
 inj_conversion_channel++;
 }
+
+
+//short detection
+if((system_flags & START_UP_FLAG) == 0U){
+if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
+if((((&ov_channel)-> new_samp) < EXP_VOLTAGE)){
+	lockout_mode();
+	system_flags |= POWER_WIRE_ERR_FLAG;
+}}}
 
 if((ex_sample_count > 100U) && (in_sample_count > 100U))
 {system_flags &= ~(TEMP_INIT_FLAG);}

@@ -97,15 +97,15 @@
 #define ONES 0xFFFFFFFF
 
 
-#define DEFAULT_OVP      2000U
-#define DEFAULT_I_TARGET 300U
+#define DEFAULT_OVP      2175U
+#define DEFAULT_I_TARGET 1515U
 #define DEFAULT_UVP      720U
 
 #define DEFAULT_MAX_CURRENT 2400U
 #define DEFAULT_MAX_VOLTAGE 3225U
 
-#define EXP_CURRENT 300U
-#define EXP_VOLTAGE 1800U
+#define EXP_CURRENT 2115U
+#define EXP_VOLTAGE 1900U
 
 #define SHORT_WIRE_RUN 400U
 #define OPEN_WIRE_RUN  2485
@@ -121,9 +121,9 @@
 #define INPUT_BAD   800U
 #define INPUT_DEAD  650U
 
-#define CURRENT_HYS       5U
+#define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
-#define PMIC_DELAY        500U
+#define PMIC_DELAY        50U
 #define THERMAL_HYS		  30U
 #define THERMAL_DELAY     750U
 #define THERMAL_MAX_DELTA 50U
@@ -180,11 +180,12 @@ typedef struct{
 }NUMBER;
 
 typedef struct{
-	uint32_t samples[200U];
+	uint32_t samples[25U];
 	uint32_t avg;
 	uint32_t new_samp;
 }SAMP_BANK;
 
+#define SAMP_BANK_LENGTH 25U
 
 
 void system_management(void);
