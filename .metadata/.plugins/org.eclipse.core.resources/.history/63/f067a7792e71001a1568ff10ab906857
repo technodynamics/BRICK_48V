@@ -123,7 +123,7 @@
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
-#define PMIC_DELAY        5U
+#define PMIC_DELAY        50U
 #define THERMAL_HYS		  30U
 #define THERMAL_DELAY     750U
 #define THERMAL_MAX_DELTA 50U
@@ -133,7 +133,7 @@
 
 #define RELAY_PIN   ((1U)<<(7U))
 #define RELAY_DELAY  500U
-#define STUP_DELAY   5U
+#define STUP_DELAY   50U
 #define WIRE_ERR_DELAY 200000U
 
 #define off 0U
