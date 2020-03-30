@@ -1023,6 +1023,7 @@ if(((&iv_channel)->new_samp) < (EXP_IN_VOLTAGE))
 {
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
+
 }
 
 }}

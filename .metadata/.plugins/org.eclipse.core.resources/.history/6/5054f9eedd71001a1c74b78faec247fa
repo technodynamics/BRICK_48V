@@ -98,10 +98,12 @@ void buck_mode(void)
 void lockout_mode(void)
 {
 
+	((GPIOA)->ODR) &= ~(((1U)<<(GPIO_11_SHIFT)));
 	((TIM1)->CCMR2) &= 0U;
-	((TIM1)->CCMR2) |= (((LOW_MODE)<<(BUCK_EN_SHIFT)));
+	((TIM1)->CCMR2) |= (((LOW_MODE)<<(BUCK_EN_SHIFT))|((1U)<<(CC3PE))|((1U)<<(CC4PE)));
     ((TIM1)->EGR) |= UG;
     while(((GPIOA)->IDR) & ((1U)<<(GPIO_10_SHIFT))){;}
+    ((GPIOA)->ODR) |= (((1U)<<(GPIO_11_SHIFT)));
 
 	set_duty_cycle(0U);
 	mode = LOCKOUT_MODE;

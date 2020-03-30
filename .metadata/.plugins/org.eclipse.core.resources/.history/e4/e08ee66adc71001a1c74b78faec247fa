@@ -105,7 +105,8 @@
 #define DEFAULT_MAX_VOLTAGE 3225U
 
 #define EXP_CURRENT 215U
-#define EXP_VOLTAGE 10U
+#define EXP_OUT_VOLTAGE 10U
+#define EXP_IN_VOLTAGE 1100
 
 #define SHORT_WIRE_RUN 400U
 #define OPEN_WIRE_RUN  2485
@@ -123,7 +124,7 @@
 
 #define CURRENT_HYS       20U
 #define VOLTAGE_HYS       10U
-#define PMIC_DELAY        50U
+#define PMIC_DELAY        5U
 #define THERMAL_HYS		  30U
 #define THERMAL_DELAY     750U
 #define THERMAL_MAX_DELTA 50U
@@ -133,7 +134,7 @@
 
 #define RELAY_PIN   ((1U)<<(7U))
 #define RELAY_DELAY  500U
-#define STUP_DELAY   50U
+#define STUP_DELAY   5U
 #define WIRE_ERR_DELAY 200000U
 
 #define off 0U

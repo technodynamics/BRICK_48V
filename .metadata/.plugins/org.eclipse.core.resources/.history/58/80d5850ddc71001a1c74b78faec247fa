@@ -193,7 +193,7 @@ void system_ptr_config(void)
 	us_i_target = DEFAULT_I_TARGET;
 	th_i_target = DEFAULT_I_TARGET;
 	v_uvp = DEFAULT_UVP;
-	exp_ov = EXP_OUT_VOLTAGE;
+	exp_ov = EXP_VOLTAGE;
 	wire_error_count = 0U;
 	stable_count = 0U;
 	temp_sample_level = 4095U;
@@ -354,7 +354,7 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			{
 			if(((((&cs_channel)->avg)-cs_offset) > (i_target - CURRENT_HYS)))
 			{
-			if((((&ov_channel)->new_samp) < EXP_OUT_VOLTAGE))
+			if((((&ov_channel)->new_samp) < EXP_VOLTAGE))
 			{
 		    lockout_mode();
 		    relay_control(off);
@@ -1013,19 +1013,10 @@ inj_conversion_channel++;
 //short detection
 if((system_flags & START_UP_FLAG) == 0U){
 if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
-if((((&ov_channel)-> new_samp) < EXP_OUT_VOLTAGE))
-{
+if((((&ov_channel)-> new_samp) < EXP_VOLTAGE)){
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
-}
-
-if(((&iv_channel)->new_samp) < (EXP_IN_VOLTAGE))
-{
-	lockout_mode();
-	system_flags |= POWER_WIRE_ERR_FLAG;
-}
-
-}}
+}}}
 
 if((ex_sample_count > 100U) && (in_sample_count > 100U))
 {system_flags &= ~(TEMP_INIT_FLAG);}
