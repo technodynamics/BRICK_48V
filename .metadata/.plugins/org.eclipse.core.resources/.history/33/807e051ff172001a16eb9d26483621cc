@@ -36,8 +36,6 @@ arr_val = clk_freq/(freq);
 ((GPIOA)->MODER) &= (~((IN_MODE)<<(GPIO_11_DSHIFT)));
 ((GPIOA)->MODER) |= (((OUT_MODE)<<(GPIO_11_DSHIFT)));
 
-
-pwm_unlock();
 /*AF1 Mode*/
 
 (((GPIOA)->AFR)[1]) |= ((AF1)<<(GPIO_10_QSHIFT));

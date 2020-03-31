@@ -645,7 +645,6 @@ relay_control(off);
 if(system_flags & PMIC_ENABLE_FLAG)
 {system_flags &= ~(PMIC_ENABLE_FLAG);}
 
-
 /*If the number of failed startups is less than 10*/
 if(wire_error_count < 10U)
 {
@@ -1014,13 +1013,13 @@ inj_conversion_channel++;
 //short detection
 if((system_flags & START_UP_FLAG) == 0U){
 if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
-if((((&ov_channel)-> avg) < EXP_OUT_VOLTAGE))
+if((((&ov_channel)-> new_samp) < EXP_OUT_VOLTAGE))
 {
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
 }
 
-if(((&iv_channel)->avg) < (EXP_IN_VOLTAGE))
+if(((&iv_channel)->new_samp) < (EXP_IN_VOLTAGE))
 {
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;

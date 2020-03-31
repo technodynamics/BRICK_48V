@@ -1020,7 +1020,7 @@ if((((&ov_channel)-> avg) < EXP_OUT_VOLTAGE))
 	system_flags |= POWER_WIRE_ERR_FLAG;
 }
 
-if(((&iv_channel)->avg) < (EXP_IN_VOLTAGE))
+if(((&iv_channel)->new_samp) < (EXP_IN_VOLTAGE))
 {
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;

@@ -36,8 +36,6 @@ arr_val = clk_freq/(freq);
 ((GPIOA)->MODER) &= (~((IN_MODE)<<(GPIO_11_DSHIFT)));
 ((GPIOA)->MODER) |= (((OUT_MODE)<<(GPIO_11_DSHIFT)));
 
-
-pwm_unlock();
 /*AF1 Mode*/
 
 (((GPIOA)->AFR)[1]) |= ((AF1)<<(GPIO_10_QSHIFT));
@@ -103,6 +101,7 @@ void lockout_mode(void)
 	((TIM1)->CCMR2) &= 0U;
 	((TIM1)->CCMR2) |= (((LOW_MODE)<<(BUCK_EN_SHIFT)));
     ((TIM1)->EGR) |= UG;
+    while(((GPIOA)->IDR) & ((1U)<<(GPIO_10_SHIFT))){;}
 
 	set_duty_cycle(0U);
 	mode = LOCKOUT_MODE;
