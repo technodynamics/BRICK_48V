@@ -334,7 +334,7 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
 			{
 			if((i_target - (((&cs_channel)->avg)-cs_offset)) > 100U)
-			{duty_cycle_increment(1U);action_taken = 1U;}
+			{duty_cycle_increment(2U);action_taken = 1U;}
 			else
 			{duty_cycle_increment(1U);action_taken = 1U;}
 			}
@@ -350,21 +350,7 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			{duty_cycle_decrement(1U);action_taken = 1U;}
 
 
-			if(((&cs_channel)->avg) > cs_offset)
-			{
-			if(((((&cs_channel)->avg)-cs_offset) > (i_target - CURRENT_HYS)))
-			{
-			if((((&ov_channel)->new_samp) < EXP_OUT_VOLTAGE))
-			{
-		    lockout_mode();
-		    relay_control(off);
-		    start_up_flags &= 0U;
-			start_up_flags |= POWER_SHORT_FLAG;
-			system_flags |= POWER_WIRE_ERR_FLAG;
-		    system_flags &= ~(START_UP_FLAG);
-		    wire_error_count += 1U;
-		    return;
-			}}}
+
 
 
 			/*Action taken in the startup procedure mark for delay*/
@@ -428,6 +414,10 @@ if(flags & CMD_EXECUTE)
 cmd = cmd_execute();
 system_ins_search(cmd);
 }
+
+
+if(th_i_target != i_target)
+{i_target = th_i_target;}
 
 button_managment();
 }
@@ -773,9 +763,9 @@ void thermal_management(void)
 	{
 		if(((&ex_temp)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
 			{
-			//system_flags |= THERMAL_CON_FLAG;
+			system_flags |= THERMAL_CON_FLAG;
 			/*Artificially set the last temperature to induce a thermal delta*/
-			//last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
+			last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
 			}
 		system_flags &= ~(THERMAL_ACTION_FLAG);
 	}
@@ -803,13 +793,14 @@ void thermal_management(void)
 	    if(pl > THERMAL_MAX_DELTA)
 	    {
 	    /*Reduction in power*/
-	    if(i_target <= 30)
-	    {i_target = 40U;}
+	    if(th_i_target <= 30)
+	    {th_i_target = 40U;}
 	    else
-	    {i_target -= 25U;}
+	    {th_i_target -= 25U;}
+
 	    /*Save the current temperature as the last temperature*/
 	    last_temp = ((&ex_temp)->avg);
-	    //last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
 
 	    /*Numbers management*/
 	    if(last_therm_action >= 1000U)
@@ -827,16 +818,13 @@ void thermal_management(void)
 	    pl =((&ex_temp)->avg) - last_temp;
 	    if(pl > THERMAL_MAX_DELTA)
 	    {
-	    i_target += 25U;
+	    th_i_target += 25U;
 
-	    if(i_target > (hs_i_target))
-	    {i_target = hs_i_target;}
-
-	    if(i_target > (us_i_target))
-	    {i_target = us_i_target;}
+	    if(th_i_target > (hs_i_target))
+	    {th_i_target = hs_i_target;}
 
 	    last_temp = ((&ex_temp)->avg);
-	    //last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
 
 	    if(last_therm_action >= 1000U)
 	    {last_therm_action -= 1000U;}
@@ -1012,21 +1000,38 @@ inj_conversion_channel++;
 
 
 //short detection
-if((system_flags & START_UP_FLAG) == 0U){
 if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
 if((((&ov_channel)-> avg) < EXP_OUT_VOLTAGE))
 {
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
+	wire_error_count += 1U;
+    if(system_flags & START_UP_FLAG)
+    {
+    system_flags &= ~(START_UP_FLAG);
+    start_up_flags &= 0U;
+    start_up_flags |=POWER_SHORT_FLAG;
+    }
+
+
 }
 
 if(((&iv_channel)->avg) < (EXP_IN_VOLTAGE))
 {
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
+	wire_error_count += 1U;
+	if(system_flags & START_UP_FLAG)
+    {
+    system_flags &= ~(START_UP_FLAG);
+    start_up_flags &= 0U;
+    start_up_flags |=POWER_SHORT_FLAG;
+    }
+
+
 }
 
-}}
+}
 
 if((ex_sample_count > 100U) && (in_sample_count > 100U))
 {system_flags &= ~(TEMP_INIT_FLAG);}
@@ -1565,6 +1570,22 @@ void flagreport(void)
 	uart1_transmit(&cli_return);
 
 	temp = adc_conversion_channel;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+
+	temp = hs_i_target;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	temp = th_i_target;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	temp = i_target;
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
