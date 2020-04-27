@@ -796,7 +796,7 @@ void thermal_management(void)
 	    if(th_i_target <= 30)
 	    {th_i_target = 40U;}
 	    else
-	    {th_i_target -= 25U;}
+	    {th_i_target -= THERMAL_STEP;}
 
 	    /*Save the current temperature as the last temperature*/
 	    last_temp = ((&ex_temp)->avg);
@@ -818,7 +818,7 @@ void thermal_management(void)
 	    pl =((&ex_temp)->avg) - last_temp;
 	    if(pl > THERMAL_MAX_DELTA)
 	    {
-	    th_i_target += 25U;
+	    th_i_target += THERMAL_STEP;
 
 	    if(th_i_target > (hs_i_target))
 	    {th_i_target = hs_i_target;}

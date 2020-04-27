@@ -117,8 +117,8 @@
 
 #define HOT_TEMP      720U
 #define COLD_TEMP     2470U
-#define FOLDBACK_TEMP 1200U
-//1200 ^^
+#define FOLDBACK_TEMP 1300U
+//1300 ^^
 
 #define INPUT_BAD   800U
 #define INPUT_DEAD  650U
@@ -128,7 +128,9 @@
 #define PMIC_DELAY        5U
 #define THERMAL_HYS		  30U
 #define THERMAL_DELAY     750U
-#define THERMAL_MAX_DELTA 150U
+#define THERMAL_MAX_DELTA 50U
+#define THERMAL_STEP      25U
+
 
 #define TS_CAL1_PTR 0x1FFF75A8
 #define TS_CAL2_PTR 0x1FFF75CA
