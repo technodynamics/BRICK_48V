@@ -2572,7 +2572,7 @@ if(on_off)
  80010ea:	801a      	strh	r2, [r3, #0]
 	i_target = DEFAULT_I_TARGET;
  80010ec:	4a2c      	ldr	r2, [pc, #176]	; (80011a0 <system_ptr_config+0x10c>)
- 80010ee:	f240 53dc 	movw	r3, #1500	; 0x5dc
+ 80010ee:	f44f 73fa 	mov.w	r3, #500	; 0x1f4
  80010f2:	8013      	strh	r3, [r2, #0]
 	hs_i_target = DEFAULT_I_TARGET;
  80010f4:	4a2b      	ldr	r2, [pc, #172]	; (80011a4 <system_ptr_config+0x110>)
@@ -3358,7 +3358,7 @@ if((((system_time)->time_nums)[millis]) != button_delay)
  8001682:	05dd      	lsls	r5, r3, #23
  8001684:	d459      	bmi.n	800173a <thermal_management+0xfa>
 		if(((&ex_temp)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
- 8001686:	f240 40f5 	movw	r0, #1269	; 0x4f5
+ 8001686:	f240 5059 	movw	r0, #1369	; 0x559
  800168a:	4282      	cmp	r2, r0
  800168c:	d806      	bhi.n	800169c <thermal_management+0x5c>
 			system_flags |= THERMAL_CON_FLAG;
@@ -3486,7 +3486,7 @@ if((((system_time)->time_nums)[millis]) != button_delay)
  8001736:	600b      	str	r3, [r1, #0]
  8001738:	bd70      	pop	{r4, r5, r6, pc}
 		if(((&ex_temp)->avg) > (FOLDBACK_TEMP + THERMAL_HYS))
- 800173a:	f240 5032 	movw	r0, #1330	; 0x532
+ 800173a:	f240 5096 	movw	r0, #1430	; 0x596
  800173e:	4282      	cmp	r2, r0
  8001740:	d9b0      	bls.n	80016a4 <thermal_management+0x64>
 				{system_flags &= ~(THERMAL_CON_FLAG|THERMAL_ACTION_FLAG);}

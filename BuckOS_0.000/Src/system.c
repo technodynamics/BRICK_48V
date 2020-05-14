@@ -264,6 +264,7 @@ if((((system_time)->time_nums)[seconds]) == sample_end)
     start_up_flags &= 0U;
     system_flags |= THERM_WIRE_ERR_FLAG;
     system_flags &= ~(START_UP_FLAG);
+    tempreport();
     wire_error_count += 1U;
     return;
     }
@@ -274,6 +275,7 @@ if((((system_time)->time_nums)[seconds]) == sample_end)
      start_up_flags &= 0U;
      system_flags |= THERM_WIRE_ERR_FLAG;
      system_flags &= ~(START_UP_FLAG);
+     temprpt();
      wire_error_count += 1U;
      return;
      }
