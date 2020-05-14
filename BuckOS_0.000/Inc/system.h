@@ -98,15 +98,15 @@
 
 
 #define DEFAULT_OVP      2500U
-#define DEFAULT_I_TARGET 500U
+#define DEFAULT_I_TARGET 315U
 #define DEFAULT_UVP      720U
 
 #define DEFAULT_MAX_CURRENT 2400U
 #define DEFAULT_MAX_VOLTAGE 3225U
 
-#define EXP_CURRENT 500U
-#define EXP_OUT_VOLTAGE 2000U
-#define EXP_IN_VOLTAGE 3500U
+#define EXP_CURRENT 315U
+#define EXP_OUT_VOLTAGE 1400U
+#define EXP_IN_VOLTAGE 1500U
 
 #define SHORT_WIRE_RUN 400U
 
@@ -118,12 +118,12 @@
 #define HOT_TEMP      720U
 #define COLD_TEMP     2470U
 #define FOLDBACK_TEMP 1400U
-//1300 ^^
+//1400 ^^
 
 #define INPUT_BAD   800U
 #define INPUT_DEAD  650U
 
-#define CURRENT_HYS       20U
+#define CURRENT_HYS       25U
 #define VOLTAGE_HYS       10U
 #define PMIC_DELAY        5U
 #define THERMAL_HYS		  30U

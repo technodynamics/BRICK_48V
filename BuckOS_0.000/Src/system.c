@@ -183,7 +183,7 @@ void system_ptr_config(void)
 	last_tsamp = 0U;
 
 	system_flags = 0U;
-	system_flags |= (ADC_INIT_FLAG|TEMP_INIT_FLAG|PMIC_INIT_FLAG|START_UP_FLAG);
+	system_flags |= (ADC_INIT_FLAG|TEMP_INIT_FLAG|PMIC_INIT_FLAG);
 	start_up_flags = 0U;
 	adc_conversion_channel = 1U;
 	cs_offset = 0U;
@@ -229,7 +229,8 @@ if((start_up_flags & FIRST_LAP_FLAG) == 0U)
 {
 stable_count = 0U;
 i_target = hs_i_target;
-sample_end = (((system_time)->time_nums)[seconds]) + 2U;
+th_i_target = hs_i_target;
+sample_end = (((system_time)->time_nums)[seconds]) + 3U;
 if(sample_end >= 60U)
 {sample_end-=60U;}
 dac_set(wire_sample_level);
@@ -253,7 +254,6 @@ if((((system_time)->time_nums)[seconds]) == sample_end)
 	return;
 	}
 
-
 	/*Ensure the voltage on the therm wire is at the appropriate level*/
 	/*If no error trigger the start-up flags to advance sequence*/
 	/*If there is an error Trigger the thermal/wire error flag and end the start-up*/
@@ -264,7 +264,6 @@ if((((system_time)->time_nums)[seconds]) == sample_end)
     start_up_flags &= 0U;
     system_flags |= THERM_WIRE_ERR_FLAG;
     system_flags &= ~(START_UP_FLAG);
-    tempreport();
     wire_error_count += 1U;
     return;
     }
@@ -275,7 +274,6 @@ if((((system_time)->time_nums)[seconds]) == sample_end)
      start_up_flags &= 0U;
      system_flags |= THERM_WIRE_ERR_FLAG;
      system_flags &= ~(START_UP_FLAG);
-     temprpt();
      wire_error_count += 1U;
      return;
      }
@@ -311,11 +309,12 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 		if((start_up_flags & PMIC_STUP_FLAG) == 0U)
 		{
 		/*Set duty cycle*/
-		set_duty_cycle(3U);
+		set_duty_cycle(1U);
 		/*buck ?!? legacy in buck boost HW version perform check here*/
 		buck_mode();
-		/*Set the offset for the current sensor*/
-		cs_offset = ((&cs_channel)->avg) - 40U;
+		/*Delay and reset the cs offset*/
+
+
 		/*Delay setup for in between actions*/
 		stup_action = (((system_time)->time_nums)[millis])+STUP_DELAY;
 			if(stup_action >= 1000U)
@@ -377,7 +376,7 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             dac_set(temp_sample_level);
             system_flags &= ~(START_UP_FLAG);
             ex_sample_count = 0U;
-            system_flags |= (PMIC_ENABLE_FLAG|TEMP_INIT_FLAG);
+            system_flags |= (PMIC_ENABLE_FLAG);
             }
             }
             }
@@ -421,7 +420,7 @@ system_ins_search(cmd);
 if(th_i_target != i_target)
 {i_target = th_i_target;}
 
-button_managment();
+//button_managment();
 }
 
 
@@ -1000,14 +999,23 @@ default:return;
 inj_conversion_channel++;
 }
 
+if(((system_flags & ADC_INIT_FLAG) == 0U)  && (((&cs_channel)->avg) < 300U))
+{
+if((cs_offset) > ((&cs_channel)->avg))
+{cs_offset = ((&cs_channel)->avg)-25U;}
+}
 
 //short detection
-if(((((&cs_channel)->avg)-cs_offset) > i_target - CURRENT_HYS)){
+if(((system_flags & ADC_INIT_FLAG) == 0U)){
+if(((((&cs_channel)->avg)-cs_offset) > (i_target + (CURRENT_HYS)))){
 if((((&ov_channel)-> avg) < EXP_OUT_VOLTAGE))
 {
+
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
-	wire_error_count += 1U;
+
+	if((system_flags & POWER_WIRE_ERR_FLAG) == 0U)
+	{wire_error_count += 1U; sendcp(1U);}
     if(system_flags & START_UP_FLAG)
     {
     system_flags &= ~(START_UP_FLAG);
@@ -1015,15 +1023,15 @@ if((((&ov_channel)-> avg) < EXP_OUT_VOLTAGE))
     start_up_flags |=POWER_SHORT_FLAG;
     }
 
-
 }
 
 if(((&iv_channel)->avg) < (EXP_IN_VOLTAGE))
 {
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
-	wire_error_count += 1U;
-	if(system_flags & START_UP_FLAG)
+	if((system_flags & POWER_WIRE_ERR_FLAG) == 0U)
+	{wire_error_count += 1U;sendcp(2U);}
+ 	if(system_flags & START_UP_FLAG)
     {
     system_flags &= ~(START_UP_FLAG);
     start_up_flags &= 0U;
@@ -1033,14 +1041,21 @@ if(((&iv_channel)->avg) < (EXP_IN_VOLTAGE))
 
 }
 
-}
+}}
 
 if((ex_sample_count > 100U) && (in_sample_count > 100U))
 {system_flags &= ~(TEMP_INIT_FLAG);}
 
 
-if((cs_sample_count > 100U) && (ov_sample_count > 100U) && (iv_sample_count > 100U))
-{system_flags &= ~(ADC_INIT_FLAG);}
+if((cs_sample_count > 10000U) && (ov_sample_count > 10000U) && (iv_sample_count > 10000U))
+{
+system_flags &= ~(ADC_INIT_FLAG);
+if(cs_offset == 0U)
+{
+cs_offset = (((&cs_channel)->avg)-25U);
+system_flags |= START_UP_FLAG;
+}
+}
 
 }
 
