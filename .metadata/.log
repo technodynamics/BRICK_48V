@@ -3716,3 +3716,6 @@ java.net.SocketException: Connection reset
 
 !ENTRY TrueSTUDIO 4 0 2020-05-13 18:44:03.071
 !MESSAGE Failed to get version information: No contact with license server: Failed to contact Atollic.
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2020-05-14 05:24:16.729
+!MESSAGE Unloading product manager
