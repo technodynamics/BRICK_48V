@@ -1015,7 +1015,7 @@ if((((&ov_channel)-> avg) < EXP_OUT_VOLTAGE))
 	system_flags |= POWER_WIRE_ERR_FLAG;
 
 	if((system_flags & POWER_WIRE_ERR_FLAG) == 0U)
-	{wire_error_count += 1U; sendcp(1U);}
+	{wire_error_count += 1U; }
     if(system_flags & START_UP_FLAG)
     {
     system_flags &= ~(START_UP_FLAG);
@@ -1030,7 +1030,7 @@ if(((&iv_channel)->avg) < (EXP_IN_VOLTAGE))
 	lockout_mode();
 	system_flags |= POWER_WIRE_ERR_FLAG;
 	if((system_flags & POWER_WIRE_ERR_FLAG) == 0U)
-	{wire_error_count += 1U;sendcp(2U);}
+	{wire_error_count += 1U;}
  	if(system_flags & START_UP_FLAG)
     {
     system_flags &= ~(START_UP_FLAG);

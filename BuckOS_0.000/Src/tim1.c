@@ -14,6 +14,7 @@ uint32_t arr_val;
 uint8_t dc;
 uint32_t dc_val;
 uint32_t percent;
+uint32_t tim1i;
 
 
 uint8_t mode;
@@ -101,6 +102,13 @@ void lockout_mode(void)
 {
 
 	((TIM1)->CCMR2) &= 0U;
+	((TIM1)->CCMR2) |= (((LOW_MODE)<<(BUCK_PWM_SHIFT)));
+    ((TIM1)->EGR) |= UG;
+
+    tim1i=0U;
+    while(tim1i<10)
+    {tim1i+=1U;}
+
 	((TIM1)->CCMR2) |= (((LOW_MODE)<<(BUCK_EN_SHIFT)));
     ((TIM1)->EGR) |= UG;
 
