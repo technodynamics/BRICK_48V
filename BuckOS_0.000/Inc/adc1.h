@@ -40,6 +40,8 @@
 #define OUTPUT_VOLTAGE_CHANNEL 16U
 #define INPUT_VOLTAGE_CHANNEL  7U
 
+#define HIPW_SIG_CHANNEL 8U
+#define INTL_SIG_CHANNEL 9U
 #define INT_TEMP_CHANNEL 6U
 #define EXT_TEMP_CHANNEL 11U
 
@@ -60,7 +62,7 @@
 #define SQ2_SHIFT 12U
 #define SQ1_SHIFT 6U
 
-#define REG_CONV_CNT 4U
+#define REG_CONV_CNT 5U
 
 
 #define JSQ4_SHIFT 26U
@@ -68,7 +70,7 @@
 #define JSQ2_SHIFT 14U
 #define JSQ1_SHIFT 8U
 
-#define INJ_CONV_CNT 1U
+#define INJ_CONV_CNT 3U
 
 
 void adc1_enable(void);

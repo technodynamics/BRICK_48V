@@ -124,7 +124,8 @@ int main(void)
 	    	system_management();
 	    	adc_management();
 	    	pmic_management();
-	    	thermal_management();
+	    	ex_thermal_management();
+	    	in_thermal_management();
 	    }
 
   /* USER CODE END WHILE */

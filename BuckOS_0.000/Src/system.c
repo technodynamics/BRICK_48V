@@ -11,52 +11,87 @@
 
 #include <system.h>
 /*Commands*/
-STRING timrpt = {4U,{'t','i','m','1'}};
-STRING voltrpt = {4U,{'v','o','l','t'}};
-STRING timerpt = {4U,{'t','i','m','e'}};
-STRING bankrpt = {4U,{'b','a','n','k'}};
-STRING tbankrpt = {5U,{'t','b','a','n','k'}};
-STRING flagrpt = {4U,{'f','l','a','g'}};
-STRING stuprpt = {4U,{'s','t','u','p'}};
-STRING convrpt = {4U,{'c','o','n','v'}};
-STRING temprpt = {4U,{'t','e','m','p'}};
-STRING flagclr = {5U,{'f','l','c','l','r'}};
-STRING dcp = {3U,{'d','c','+'}};
-STRING buck = {4U,{'b','u','c','k'}};
-STRING boost = {5U,{'b','o','o','s','t'}};
-STRING pass = {4U,{'p','a','s','s'}};
-STRING lock = {4U,{'l','o','c','k'}};
-STRING dcbase = {4U,{'d','c',' ',' '}};
-STRING dacup = {5U,{'d','a','c','u','p'}};
-STRING dacdn = {5U,{'d','a','c','d','n'}};
-STRING dacrpt = {6U,{'d','a','c','r','p','t'}};
-STRING dacmx = {5U,{'d','a','c','m','x'}};
-STRING dacmn = {5U,{'d','a','c','m','n'}};
-STRING drven = {5U,{'d','r','v','e','n'}};
-STRING drvdis = {6U,{'d','r','v','d','i','s'}};
-STRING csrs = {4U,{'c','s','r','s'}};
+STRING true = {4U,{'t','r','u','e'}};
+STRING false = {5U,{'f','a','l','s','e'}};
+
+STRING adc_init = {9U,{'A','D','C',' ','I','N','I','T',':'}};
+STRING avg_bank = {9U,{'A','V','G',' ','B','A','N','K',':'}};
+STRING adc_conv = {9U,{'A','D','C',' ','C','O','N','V',':'}};
+STRING avg_temp = {9U,{'A','V','G',' ','T','E','M','P',':'}};
+STRING temp_init = {10U,{'T','E','M','P',' ','I','N','I','T',':'}};
+STRING pmic_init = {10U,{'P','M','I','C',' ','I','N','I','T',':'}};
+STRING pmic_en = {8U,{'P','M','I','C',' ','E','N',':'}};
+STRING ex_th_con = {12U,{'E','X',' ','T','H','R','M',' ','C','O','N',':'}};
+STRING in_th_con = {12U,{'I','N',' ','T','H','R','M',' ','C','O','N',':'}};
+STRING ex_th_act = {12U,{'E','X',' ','T','H','R','M',' ','A','C','T',':'}};
+STRING in_th_act = {12U,{'I','N',' ','T','H','R','M',' ','A','C','T',':'}};
+STRING thwr_error = {14U,{'T','H','R','M',' ','W','R',' ','E','R','R','O','R',':'}};
+STRING start_up = {9U,{'S','T','A','R','T',' ','U','P',':'}};
+STRING pwwr_error = {15U,{'P','O','W','E','R',' ','W','R',' ','E','R','R','O','R',':'}};
+STRING inj_conv = {9U,{'I','N','J',' ','C','O','N','V',':'}};
+STRING cc = {10U,{'C','R','N','T',' ','C','O','M','P',':'}};
+STRING in_thrm_error = {14U,{'I','N',' ','T','H','R','M',' ','E','R','R','O','R',':'}};
+STRING slave = {6U,{'S','L','A','V','E',':'}};
+STRING in_pwr_error = {14U,{'I','N',' ','P','W','R',' ','E','R','R','O','R',':'}};
+
+STRING flg = {3U,{'f','l','g'}};
+STRING vlt = {3U,{'v','l','t'}};
 STRING adc = {3U,{'a','d','c'}};
+STRING tmr = {3U,{'t','m','r'}};
 
 
 
 
+STRING opv = {6U,{'O','P','-','V',':',' '}};
+STRING ipv = {6U,{'I','P','-','V',':',' '}};
+STRING ovv = {6U,{'O','V','-','V',':',' '}};
+
+STRING opi = {6U,{'O','P','-','I',':',' '}};
+STRING ropi = {6U,{'R','O','P','-','I',':',' '}};
+STRING cofs = {6U,{'C','O','F','-','I',':',' '}};
+
+STRING hsi = {6U,{'H','S','-','I',':',' '}};
+STRING usi = {6U,{'U','S','-','I',':',' '}};
+STRING tsi = {6U,{'T','S','-','I',':',' '}};
+STRING cci = {6U,{'C','C','-','I',':',' '}};
+STRING aci = {6U,{'A','C','-','I',':',' '}};
+
+STRING intemp = {9U,{'I','N',' ','T','E','M','P',':',' '}};
+STRING extemp = {9U,{'E','X',' ','T','E','M','P',':',' '}};
+STRING intlsig = {10U,{'I','N','T','L',' ','S','I','G',':',' '}};
+STRING hipwsig = {10U,{'H','I','P','W',' ','S','I','G',':',' '}};
+
+STRING cnvcnt = {10U,{'C','O','N','V',' ','C','N','T',':',' '}};
+STRING ivcnt = {8U,{'I','V',' ','C','N','T',':',' '}};
+STRING ovcnt = {8U,{'O','V',' ','C','N','T',':',' '}};
+STRING cscnt = {8U,{'C','S',' ','C','N','T',':',' '}};
+STRING intcnt = {9U,{'I','N','T',' ','C','N','T',':',' '}};
+STRING extcnt = {9U,{'E','X','T',' ','C','N','T',':',' '}};
+STRING itscnt = {9U,{'I','T','S',' ','C','N','T',':',' '}};
+STRING hpscnt = {9U,{'H','P','S',' ','C','N','T',':',' '}};
+
+STRING convch = {9U,{'C','O','N','V',' ','C','H',':',' '}};
+STRING iconvch = {10U,{'I','C','O','N','V',' ','C','H',':',' '}};
+STRING sqr1 = {6U,{'S','Q','R',' ','1',':'}};
+STRING sqr2 = {6U,{'S','Q','R',' ','2',':'}};
+
+
+
+STRING pwm = {5U,{'P','W','M',':',' '}};
+STRING mod = {6U,{'M','O','D','E',':',' '}};
+STRING lock = {4U,{'L','O','C','K'}};
+STRING buck = {4U,{'B','U','C','K'}};
+
+STRING div = {1U,{'/'}};
 STRING money = {1U,{'$'}};
-STRING capC = {3U,{'C',':',' '}};
-STRING capI = {3U,{'I',':',' '}};
-STRING capO = {3U,{'O',':',' '}};
-STRING capE = {3U,{'E',':',' '}};
+STRING sp = {1U,{' '}};
 
-
-
-/*Debug STRINGS*/
-STRING cp1 = {3U,{'c','p','1'}};
-STRING cp2 = {3U,{'c','p','2'}};
-STRING cp3 = {3U,{'c','p','3'}};
-STRING cp4 = {3U,{'c','p','4'}};
+STRING wr_err_cnt = {14U,{'W','R',' ','E','R','R','O','R',' ','C','N','T',':',' '}};
+STRING err = {5U,{'E','R','R','O','R'}};
 
 
 /*System Prompt*/
-STRING prompt = {11U,{'D','E','V','@','S','T','M','3','2',':',' '}};
+STRING prompt = {11U,{'B','R','K','@','S','T','M','3','2',':',' '}};
 STRING cli_return = {2U,{10U,13U}};
 
 uint32_t system_flags;
@@ -80,15 +115,23 @@ SAMP_BANK iv_channel;
 SAMP_BANK ov_channel;
 SAMP_BANK ex_temp;
 SAMP_BANK in_temp;
+SAMP_BANK intl_sig;
+SAMP_BANK hipw_sig;
+
+
 
 uint32_t cs_sample_count;
 uint32_t iv_sample_count;
 uint32_t ov_sample_count;
 uint32_t ex_sample_count;
 uint32_t in_sample_count;
+uint32_t intl_sample_count;
+uint32_t hipw_sample_count;
+
 
 
 uint32_t conversion_count;
+
 uint32_t avg_count;
 
 uint32_t pl;
@@ -109,6 +152,7 @@ uint16_t i_target;
 uint16_t hs_i_target;
 uint16_t us_i_target;
 uint16_t th_i_target;
+uint16_t cc_i_target;
 uint16_t v_uvp;
 uint16_t exp_ov;
 
@@ -117,10 +161,12 @@ uint16_t wire_error_count;
 uint32_t check_delay;
 uint16_t temp_sample_level;
 uint16_t wire_sample_level;
-uint16_t last_temp;
+uint16_t ex_last_temp;
+uint16_t in_last_temp;
 
 
-uint32_t last_therm_action;
+uint32_t ex_last_therm_action;
+uint32_t in_last_therm_action;
 uint32_t last_pmic_action;
 
 uint32_t first_lap;
@@ -137,6 +183,7 @@ uint32_t up_button_hold_count;
 
 uint32_t dim_step;
 
+uint8_t temp_avg_switch;
 
 uint32_t dbg1;
 uint32_t dbg2;
@@ -173,10 +220,19 @@ void system_ptr_config(void)
 	cs_channel.samples[sysi] = 0U;
 	iv_channel.samples[sysi] = 0U;
 	ov_channel.samples[sysi] = 0U;
+	in_temp.samples[sysi] = 0U;
+    ex_temp.samples[sysi] = 0U;
+    intl_sig.samples[sysi] = 0U;
+    hipw_sig.samples[sysi] = 0U;
 	}
 	cs_channel.avg = 0U;
 	iv_channel.avg = 0U;
 	ov_channel.avg = 0U;
+	in_temp.avg = 0U;
+    ex_temp.avg = 0U;
+	intl_sig.avg = 0U;
+	hipw_sig.avg = 0U;
+
 
 	system_time = read_time();
 	last_vsamp = 0U;
@@ -204,6 +260,7 @@ void system_ptr_config(void)
 	down_button_hold_count = 0U;
     button_delay = (((system_time)->time_nums)[millis]);
     dim_step = 25U;
+    temp_avg_switch = 0U;
 
 	dac_set(0U);
 
@@ -242,7 +299,7 @@ else
 /*if we have waited one second check*/
 /*This block executes every "single - loop" of the start up procedure*/
 /*After the first seconds has transpired */
-if((((system_time)->time_nums)[seconds]) == sample_end)
+if(((((system_time)->time_nums)[seconds]) == sample_end) && (start_up_flags == FIRST_LAP_FLAG))
 {
 	/*Ensure the temp sampling has initialized*/
 	/*If not wait another second*/
@@ -260,23 +317,32 @@ if((((system_time)->time_nums)[seconds]) == sample_end)
     if(((&ex_temp)->avg) > SHORT_WIRE)
 	{start_up_flags |= NO_SHORT_FLAG;}
     else
-    {
-    start_up_flags &= 0U;
-    system_flags |= THERM_WIRE_ERR_FLAG;
-    system_flags &= ~(START_UP_FLAG);
-    wire_error_count += 1U;
-    return;
-    }
+    {system_flags |= THERM_WIRE_ERR_FLAG;}
     if(((&ex_temp)->avg) < OPEN_WIRE)
     {start_up_flags |= NO_OPEN_FLAG;}
     else
-     {
-     start_up_flags &= 0U;
-     system_flags |= THERM_WIRE_ERR_FLAG;
-     system_flags &= ~(START_UP_FLAG);
-     wire_error_count += 1U;
-     return;
-     }
+     {system_flags |= THERM_WIRE_ERR_FLAG;}
+
+    if(system_flags & THERM_WIRE_ERR_FLAG)
+    {
+    for(sysi=0U;sysi<100U;sysi+=1U){;}
+
+    if(((&intl_sig)->avg) < SHORT_WIRE)
+    {
+    system_flags &= ~(POWER_WIRE_ERR_FLAG);
+    system_flags |= SLAVE_MODE_ENABLED;
+    start_up_flags |= (NO_SHORT_FLAG|NO_OPEN_FLAG);
+    }
+    else
+    {
+    start_up_flags = 0U;
+    system_flags &= ~(START_UP_FLAG);
+    wire_error_count+=1U;
+    return;
+    }
+
+
+    }
 }
 
 /*No thermal error flags have been executed*/
@@ -285,6 +351,9 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 	/*If the relay is not enabled then enable it set a delay*/
 	if((start_up_flags & RELAY_ENABLE_FLAG) == 0U)
 	{
+	if((system_flags & SLAVE_MODE_ENABLED) == 0U)
+	{/*master_mode_enable();*/}
+
 	relay_control(on);
 	start_up_flags |= RELAY_ENABLE_FLAG;
 	stup_action = ((system_time)->time_nums)[millis] + RELAY_DELAY;
@@ -334,8 +403,8 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
 			{
 			if((((&cs_channel)->avg)-cs_offset) < (i_target- CURRENT_HYS))
 			{
-			if((i_target - (((&cs_channel)->avg)-cs_offset)) > 100U)
-			{duty_cycle_increment(2U);action_taken = 1U;}
+			if((i_target - (((&cs_channel)->avg)-cs_offset)) > 125U)
+			{duty_cycle_increment(5U);action_taken = 1U;}
 			else
 			{duty_cycle_increment(1U);action_taken = 1U;}
 			}
@@ -377,6 +446,8 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             system_flags &= ~(START_UP_FLAG);
             ex_sample_count = 0U;
             system_flags |= (PMIC_ENABLE_FLAG);
+            flagreport();
+            master_reset();
             }
             }
             }
@@ -386,8 +457,8 @@ if((start_up_flags & (NO_SHORT_FLAG|NO_OPEN_FLAG)) == (NO_SHORT_FLAG|NO_OPEN_FLA
             if(((&iv_channel)->avg) < (INPUT_BAD - VOLTAGE_HYS))
             {
             start_up_flags |= (INPUT_ERR_FLAG|CURRENT_MOD_FLAG);
-            hs_i_target = (((&cs_channel)->avg)-cs_offset)-25U;
-            duty_cycle_decrement(1U);
+            hs_i_target = DEFAULT_I_TARGET - 50U;
+            duty_cycle_decrement(10U);
             i_target = hs_i_target;
             }
 
@@ -417,8 +488,7 @@ system_ins_search(cmd);
 }
 
 
-if(th_i_target != i_target)
-{i_target = th_i_target;}
+
 
 //button_managment();
 }
@@ -427,129 +497,6 @@ if(th_i_target != i_target)
 void button_managment(void)
 {
 
-if((((system_time)->time_nums)[millis]) != button_delay)
-{
-	up_button_dbnc = up_button_dbnc << 1U;
-	down_button_dbnc = down_button_dbnc << 1U;
-
-	if((((GPIOB)->IDR) & UP_BUTTON) == 0U)
-	{up_button_dbnc |= 1U;}
-	if((((GPIOB)->IDR) & DOWN_BUTTON) == 0U)
-	{down_button_dbnc |= 1U;}
-
-
-	if(up_button_dbnc == BUTTON_PRESSED)
-	{up_button_hold_count = 0U;}
-
-	if(up_button_dbnc == BUTTON_HELD)
-	{
-	up_button_hold_count += 1U;
-
-	if(up_button_hold_count == 50U)
-	{
-	if(us_i_target < (hs_i_target- dim_step))
-	{
-		if(us_i_target < (th_i_target - dim_step))
-		{
-			us_i_target += dim_step;
-			i_target = us_i_target;
-		}
-		else
-		{
-		us_i_target = th_i_target;
-		i_target = th_i_target;
-		}
-	}
-	else
-	{
-	if((system_flags & THERMAL_CON_FLAG) == 0U)
-	{
-	us_i_target = hs_i_target;
-	th_i_target = hs_i_target;
-	i_target = hs_i_target;
-	}
-	}
-    up_button_hold_count = 0U;
-	}
-
-	}
-
-	if(up_button_dbnc == BUTTON_RELEASED)
-	{
-		if(us_i_target < (hs_i_target- dim_step))
-		{
-			if(us_i_target < (th_i_target - dim_step))
-			{
-				us_i_target += dim_step;
-				i_target = us_i_target;
-			}
-			else
-			{
-			us_i_target = th_i_target;
-			i_target = th_i_target;
-			}
-		}
-		else
-		{
-		if((system_flags & THERMAL_CON_FLAG) == 0U)
-		{
-		us_i_target = hs_i_target;
-		th_i_target = hs_i_target;
-		i_target = hs_i_target;
-		}
-		}
-
-	}
-
-
-	if(down_button_dbnc == BUTTON_PRESSED)
-	{down_button_hold_count = 0U;}
-
-	if(down_button_dbnc == BUTTON_HELD)
-	{
-	down_button_hold_count += 1U;
-
-	if(down_button_hold_count == 50U)
-	{
-	if(us_i_target > (cs_offset + dim_step))
-	{
-		   if(us_i_target > i_target)
-		   {us_i_target = i_target;}
-
-			us_i_target -= dim_step;
-			i_target = us_i_target;
-	}
-	else
-	{
-	us_i_target = cs_offset+dim_step;
-	i_target = us_i_target;
-	}
-    down_button_hold_count = 0U;
-	}
-
-	}
-
-    if(down_button_dbnc == BUTTON_RELEASED)
-    {
-    	if(us_i_target > (cs_offset + dim_step))
-    	{
-    	   if(us_i_target > i_target)
-    	   {us_i_target = i_target;}
-
-    	   us_i_target -= dim_step;
-    	   i_target = us_i_target;
-    	}
-    	else
-    	{
-    	us_i_target = cs_offset+dim_step;
-    	i_target = us_i_target;
-    	}
-    }
-
-
-
-	button_delay = (((system_time)->time_nums)[millis]);
-}
 
 
 }
@@ -572,7 +519,7 @@ else
 {
 	//If there is no On Going Conversion
 	//Set conversion Channel and intiate conversions
-	if((system_flags & ADC_CONV_FLAG) == 0U)
+	if(((system_flags & (ADC_CONV_FLAG|INJ_CONV_FLAG)) == 0U))
 	{
 	adc_conversion_channel = 1U;
 	adc1_regular_conversions();
@@ -581,8 +528,16 @@ else
 	else
 	{
 	//if reached end of conversions
-	if(adc_conversion_channel == 4U)
+	if(adc_conversion_channel >= 4U)
 	{system_flags &= ~(ADC_CONV_FLAG);}
+	else
+	{
+	if((((ADC1)->CR) & (ADC_START|ADC_JSTART)) == 0U)
+	{
+	system_flags &= ~(ADC_CONV_FLAG);
+	}}
+
+
 	}
 
 }
@@ -594,17 +549,22 @@ if(system_flags & AVG_TEMP_FLAG)
 {
 avg_samp_bank(&ex_temp);
 avg_samp_bank(&in_temp);
-system_flags &= ~(AVG_TEMP_FLAG);
+avg_samp_bank(&intl_sig);
+avg_samp_bank(&hipw_sig);
+system_flags &= ~(AVG_TEMP_FLAG|INJ_CONV_FLAG);
 }
 else
 {
 //Take one sample every milli second
 if((((system_time)->time_nums)[millis]) != last_tsamp)
 {
+if((system_flags & ADC_CONV_FLAG) == 0U)
+{
 inj_conversion_channel = 1U;
 adc1_inject_conversions();
 last_tsamp = (((system_time)->time_nums)[millis]);
-}
+system_flags |= INJ_CONV_FLAG;
+}}
 }
 
 }
@@ -718,8 +678,100 @@ else
 }
 
 }
+void af_thermal_management(void)
+{
+    /*Artificial data*/
 
-void thermal_management(void)
+	/*Check to see if the threshold for thermal foldback has been reached*/
+	if((system_flags & THERMAL_CON_FLAG) == 0U)
+	{
+		if(((&intl_sig)->avg) < (FOLDBACK_TEMP - THERMAL_HYS))
+			{
+			system_flags |= THERMAL_CON_FLAG;
+			/*Artificially set the last temperature to induce a thermal delta*/
+			ex_last_temp = ((&intl_sig)->avg) + (2U*THERMAL_MAX_DELTA);
+			}
+		system_flags &= ~(THERMAL_ACTION_FLAG);
+	}
+	/*If the thermal con flag is popped and temps are below the
+	 * foldback point turn off the thermal control*/
+	else
+	{
+		if(((&intl_sig)->avg) > (FOLDBACK_TEMP + THERMAL_HYS))
+				{system_flags &= ~(THERMAL_CON_FLAG|THERMAL_ACTION_FLAG);}
+	}
+
+
+	/*If the thermal control flag is set*/
+	if(system_flags & THERMAL_CON_FLAG)
+	{
+		/*If the delay end marker is turned off*/
+		if((system_flags & THERMAL_ACTION_FLAG) == 0U)
+		{
+		/*If the light is getting hotter*/
+	    if(((&intl_sig)->avg) < ex_last_temp)
+	    {
+	    /*Examine the derivative to determine if enough thermal change has occured
+	     *that the light requires a reduction in power*/
+	    pl = ex_last_temp - ((&intl_sig)->avg);
+	    if(pl > THERMAL_MAX_DELTA)
+	    {
+	    /*Reduction in power*/
+	    if(th_i_target <= 30)
+	    {th_i_target = 40U;}
+	    else
+	    {th_i_target -= THERMAL_STEP;}
+
+	    /*Save the current temperature as the last temperature*/
+	    ex_last_temp = ((&intl_sig)->avg);
+	    ex_last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+
+	    /*Numbers management*/
+	    if(ex_last_therm_action >= 1000U)
+	    {ex_last_therm_action -= 1000U;}
+
+	    /*Trigger the thermal action flag */
+	    system_flags |= THERMAL_ACTION_FLAG;
+	    }
+	    }
+
+	    /*If the temperature has lowered then */
+	    if(((&intl_sig)->avg) > ex_last_temp)
+	    {
+	    /*If lowered enough turn up the light to the max level possible*/
+	    pl =((&intl_sig)->avg) - ex_last_temp;
+	    if(pl > THERMAL_MAX_DELTA)
+	    {
+	    th_i_target += THERMAL_STEP;
+
+	    if(th_i_target > (hs_i_target))
+	    {th_i_target = hs_i_target;}
+
+	    ex_last_temp = ((&intl_sig)->avg);
+	    ex_last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+
+	    if(ex_last_therm_action >= 1000U)
+	    {ex_last_therm_action -= 1000U;}
+
+	    system_flags |= THERMAL_ACTION_FLAG;
+	    }
+	    }
+
+
+		}
+
+		else
+		{
+
+		if((((system_time)->time_nums)[millis]) == ex_last_therm_action)
+		{system_flags &= ~(THERMAL_ACTION_FLAG);}
+
+		}
+
+	}
+}
+
+void ex_thermal_management(void)
 {
 
 	if(system_flags & TEMP_INIT_FLAG)
@@ -727,6 +779,10 @@ void thermal_management(void)
 	/*Check for extreme conditions*/
 	if((system_flags & PMIC_ENABLE_FLAG) == 0U)
 	{return;}
+
+	if(system_flags & SLAVE_MODE_ENABLED)
+	{af_thermal_management();return;}
+
 
 	if(((&ex_temp)->avg) <= SHORT_WIRE_RUN)
 	{
@@ -766,7 +822,7 @@ void thermal_management(void)
 			{
 			system_flags |= THERMAL_CON_FLAG;
 			/*Artificially set the last temperature to induce a thermal delta*/
-			last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
+			ex_last_temp = ((&ex_temp)->avg) + (2U*THERMAL_MAX_DELTA);
 			}
 		system_flags &= ~(THERMAL_ACTION_FLAG);
 	}
@@ -786,26 +842,28 @@ void thermal_management(void)
 		if((system_flags & THERMAL_ACTION_FLAG) == 0U)
 		{
 		/*If the light is getting hotter*/
-	    if(((&ex_temp)->avg) < last_temp)
+	    if(((&ex_temp)->avg) < ex_last_temp)
 	    {
 	    /*Examine the derivative to determine if enough thermal change has occured
 	     *that the light requires a reduction in power*/
-	    pl = last_temp - ((&ex_temp)->avg);
+	    pl = ex_last_temp - ((&ex_temp)->avg);
 	    if(pl > THERMAL_MAX_DELTA)
 	    {
 	    /*Reduction in power*/
 	    if(th_i_target <= 30)
 	    {th_i_target = 40U;}
 	    else
-	    {th_i_target -= THERMAL_STEP;}
+	    {th_i_target -= THERMAL_STEP; master_down();}
+
+
 
 	    /*Save the current temperature as the last temperature*/
-	    last_temp = ((&ex_temp)->avg);
-	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+	    ex_last_temp = ((&ex_temp)->avg);
+	    ex_last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
 
 	    /*Numbers management*/
-	    if(last_therm_action >= 1000U)
-	    {last_therm_action -= 1000U;}
+	    if(ex_last_therm_action >= 1000U)
+	    {ex_last_therm_action -= 1000U;}
 
 	    /*Trigger the thermal action flag */
 	    system_flags |= THERMAL_ACTION_FLAG;
@@ -813,22 +871,23 @@ void thermal_management(void)
 	    }
 
 	    /*If the temperature has lowered then */
-	    if(((&ex_temp)->avg) > last_temp)
+	    if(((&ex_temp)->avg) > ex_last_temp)
 	    {
 	    /*If lowered enough turn up the light to the max level possible*/
-	    pl =((&ex_temp)->avg) - last_temp;
+	    pl =((&ex_temp)->avg) - ex_last_temp;
 	    if(pl > THERMAL_MAX_DELTA)
 	    {
 	    th_i_target += THERMAL_STEP;
+	    master_up();
 
 	    if(th_i_target > (hs_i_target))
-	    {th_i_target = hs_i_target;}
+	    {th_i_target = hs_i_target; master_down();}
 
-	    last_temp = ((&ex_temp)->avg);
-	    last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+	    ex_last_temp = ((&ex_temp)->avg);
+	    ex_last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
 
-	    if(last_therm_action >= 1000U)
-	    {last_therm_action -= 1000U;}
+	    if(ex_last_therm_action >= 1000U)
+	    {ex_last_therm_action -= 1000U;}
 
 	    system_flags |= THERMAL_ACTION_FLAG;
 	    }
@@ -840,7 +899,7 @@ void thermal_management(void)
 		else
 		{
 
-		if((((system_time)->time_nums)[millis]) == last_therm_action)
+		if((((system_time)->time_nums)[millis]) == ex_last_therm_action)
 		{system_flags &= ~(THERMAL_ACTION_FLAG);}
 
 		}
@@ -848,22 +907,122 @@ void thermal_management(void)
 	}
 }
 
+void in_thermal_management(void)
+{
+
+	/*Current Compensations*/
+	if(((&in_temp)->avg) < (CC_FOLDBACK_TEMP-IN_THERMAL_HYS))
+	{
+	pl = CC_FOLDBACK_TEMP - ((&in_temp)->avg);
+	pl %= 75U;
+	cc_i_target = hs_i_target - pl;
+	system_flags |= (CC_OUTPUT_FLAG);
+	}
+	else
+	{cc_i_target = hs_i_target;system_flags &= ~(CC_OUTPUT_FLAG);}
+
+
+	/*Check to see if the threshold for thermal foldback has been reached*/
+	if((system_flags & IN_THERMAL_CON_FLAG) == 0U)
+	{
+		if(((&in_temp)->avg) < (IN_FOLDBACK_TEMP - IN_THERMAL_HYS))
+			{
+			system_flags |= IN_THERMAL_CON_FLAG;
+			/*Artificially set the last temperature to induce a thermal delta*/
+			in_last_temp = ((&in_temp)->avg) + (2U*THERMAL_MAX_DELTA);
+			}
+		system_flags &= ~(IN_THERMAL_ACTION_FLAG);
+	}
+	/*If the thermal con flag is popped and temps are below the
+	 * foldback point turn off the thermal control*/
+	else
+	{
+		if(((&in_temp)->avg) > (IN_FOLDBACK_TEMP + THERMAL_HYS))
+				{system_flags &= ~(IN_THERMAL_CON_FLAG|IN_THERMAL_ACTION_FLAG);}
+	}
+
+
+	/*If the thermal control flag is set*/
+	if(system_flags & IN_THERMAL_CON_FLAG)
+	{
+		/*If the delay end marker is turned off*/
+		if((system_flags & IN_THERMAL_ACTION_FLAG) == 0U)
+		{
+		/*If the light is getting hotter*/
+	    if(((&in_temp)->avg) < in_last_temp)
+	    {
+	    /*Examine the derivative to determine if enough thermal change has occured
+	     *that the light requires a reduction in power*/
+	    pl = in_last_temp - ((&in_temp)->avg);
+	    if(pl > THERMAL_MAX_DELTA)
+	    {
+	    /*Reduction in power*/
+	    if(th_i_target <= 30)
+	    {th_i_target = 40U;}
+	    else
+	    {th_i_target -= THERMAL_STEP;}
+
+	    /*Save the current temperature as the last temperature*/
+	    in_last_temp = ((&in_temp)->avg);
+	    in_last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+
+	    /*Numbers management*/
+	    if(in_last_therm_action >= 1000U)
+	    {in_last_therm_action -= 1000U;}
+
+	    /*Trigger the thermal action flag */
+	    system_flags |= IN_THERMAL_ACTION_FLAG;
+	    }
+	    }
+
+	    /*If the temperature has lowered then */
+	    if(((&in_temp)->avg) > in_last_temp)
+	    {
+	    /*If lowered enough turn up the light to the max level possible*/
+	    pl =((&in_temp)->avg) - in_last_temp;
+	    if(pl > THERMAL_MAX_DELTA)
+	    {
+	    th_i_target += THERMAL_STEP;
+
+	    if(th_i_target > (hs_i_target))
+	    {th_i_target = hs_i_target;}
+
+	    in_last_temp = ((&in_temp)->avg);
+	    in_last_therm_action = (((system_time)->time_nums)[millis]) + THERMAL_DELAY;
+
+	    if(in_last_therm_action >= 1000U)
+	    {in_last_therm_action -= 1000U;}
+
+	    system_flags |= IN_THERMAL_ACTION_FLAG;
+	    }
+	    }
+
+
+		}
+
+		else
+		{
+
+		if((((system_time)->time_nums)[millis]) == in_last_therm_action)
+		{system_flags &= ~(IN_THERMAL_ACTION_FLAG);}
+
+		}
+
+	}
+}
 
 void relay_control(uint8_t on_off)
 {
 
 if(on_off)
 {
-((GPIOA)->ODR) |= ((1U)<<(GPIO_11_SHIFT));
 ((GPIOA)->ODR) |= RELAY_PIN;
 }
 else
 {
-((GPIOA)->ODR)  &= ~(((1U)<<(GPIO_11_SHIFT)));
 ((GPIOA)->ODR) &= ~RELAY_PIN;
 }
 }
-
 
 void num_to_string(NUMBER* num)
 {
@@ -878,6 +1037,7 @@ void convert_to_ascii(uint32_t num)
 uint8_t temp;
 uint32_t copy = num;
 uint32_t div = 1000000000U;
+(&num_hold)->length = 10U;
 
 for(sysi=0U; sysi < 10U; sysi++)
 {
@@ -885,25 +1045,18 @@ if(copy > div)
 {
 temp = copy / div;
 temp += 48U;
-((&num_1)->ascii)[sysi] = temp;
+(((&num_hold)->string)[sysi]) = temp;
 }
 else
-{((&num_1)->ascii)[sysi] = 48U;}
+{(((&num_hold)->string)[sysi]) = 48U;}
 
 temp = copy / div;
 copy -= (temp*div);
 div /= 10U;
 }
 
-(&num_1)-> bin = num;
-
-(&num_hold)->length = 10U;
-
-for(sysi=0U; sysi < 10U; sysi++)
-{(((&num_hold)->string)[sysi]) = (((&num_1)->ascii)[sysi]);}
 
 }
-
 
 uint8_t string_compare(STRING* in1, STRING* in2)
 {
@@ -927,7 +1080,7 @@ else
 void avg_samp_bank(SAMP_BANK* in)
 {
 	avg_dummy = 0U;
-	for(sysi=0U; sysi<SAMP_BANK_LENGTH; sysi++)
+	for(sysi=0U; sysi<(SAMP_BANK_LENGTH-1U); sysi++)
 	{
 	((in)->samples)[sysi] = ((in)->samples)[sysi+1U];
 	avg_dummy += ((in)->samples)[sysi];
@@ -936,7 +1089,6 @@ void avg_samp_bank(SAMP_BANK* in)
 	((in)->samples)[(SAMP_BANK_LENGTH-1U)] = ((in)->new_samp);
 	((in)->avg) = (avg_dummy/SAMP_BANK_LENGTH);
 }
-
 
 void raise_avg_flag(void)
 {
@@ -951,7 +1103,6 @@ system_flags |= AVG_TEMP_FLAG;
 avg_count++;
 //((ADC1)->IER) &= ~(JEOCI|JEOSI);
 }
-
 
 void add_sample(uint32_t num, uint8_t inj)
 {
@@ -992,6 +1143,17 @@ case 2U:
 in_sample_count++;
 ((&in_temp)->new_samp) = num;
 break;
+
+case 3U:
+hipw_sample_count++;
+((&hipw_sig)->new_samp) = num;
+break;
+
+case 4U:
+intl_sample_count++;
+((&intl_sig)->new_samp) = num;
+break;
+
 
 default:return;
 }
@@ -1047,7 +1209,7 @@ if((ex_sample_count > 100U) && (in_sample_count > 100U))
 {system_flags &= ~(TEMP_INIT_FLAG);}
 
 
-if((cs_sample_count > 10000U) && (ov_sample_count > 10000U) && (iv_sample_count > 10000U))
+if((cs_sample_count > 1000U) && (ov_sample_count > 1000U) && (iv_sample_count > 1000U))
 {
 system_flags &= ~(ADC_INIT_FLAG);
 if(cs_offset == 0U)
@@ -1059,646 +1221,402 @@ system_flags |= START_UP_FLAG;
 
 }
 
-void driveB(uint8_t pin, uint8_t on_off)
-{
-
-if(on_off)
-{((GPIOB)->ODR) |= ((1U)<<(pin));}
-else
-{((GPIOB)->ODR) &= (~((1U)<<(pin)));}
-
-}
-
-void driveA(uint8_t pin, uint8_t on_off)
-{
-
-if(on_off)
-{((GPIOA)->ODR) |= ((1U)<<(pin));}
-else
-{((GPIOA)->ODR) &= (~((1U)<<(pin)));}
-
-}
-
-
-void sendcp(uint8_t cp)
-{
-switch(cp)
-{
-case 1U:
-	uart1_transmit(&cp1);
-	uart1_transmit(&cli_return);
-break;
-case 2U:
-	uart1_transmit(&cp2);
-	uart1_transmit(&cli_return);
-break;
-case 3U:
-	uart1_transmit(&cp3);
-	uart1_transmit(&cli_return);
-break;
-case 4U:
-	uart1_transmit(&cp4);
-	uart1_transmit(&cli_return);
-break;
-default:
-	uart1_transmit(&prompt);
-	uart1_transmit(&cli_return);
-break;
-
-
-}
-}
-
 
 void system_ins_search(STRING* cmd)
 {
 uart1_transmit(&cli_return);
 
-if(string_compare(cmd,&timrpt))
-{tim1report();}
-
-if(string_compare(cmd,&voltrpt))
-{voltreport();}
-
-if(string_compare(cmd,&timerpt))
-{timereport();}
-
-if(string_compare(cmd,&bankrpt))
-{bankreport();}
-
-if(string_compare(cmd,&tbankrpt))
-{tbankreport();}
-
-if(string_compare(cmd,&flagrpt))
+if(string_compare(cmd,&flg))
 {flagreport();}
 
-if(string_compare(cmd,&stuprpt))
-{stupreport();}
+if(string_compare(cmd,&vlt))
+{voltreport();}
+
+if(string_compare(cmd,&tmr))
+{tmrreport();}
 
 if(string_compare(cmd,&adc))
 {adcreport();}
 
-if(string_compare(cmd,&flagclr))
-{flagclear();}
-
-if(string_compare(cmd,&convrpt))
-{convreport();}
-
-if(string_compare(cmd,&temprpt))
-{tempreport();}
-
-if(string_compare(cmd,&dcp))
-{duty_cycle_increment(1U);uart1_transmit(&money);}
-
-if(string_compare(cmd,&buck))
-{buck_mode();uart1_transmit(&money);}
-
-//if(string_compare(cmd,&boost))
-//{boost_mode();uart1_transmit(&money);}
-
-if(string_compare(cmd,&lock))
-{lockout_mode();uart1_transmit(&money);}
-
-//if(string_compare(cmd,&pass))
-//{passthru_mode();uart1_transmit(&money);}
-
-if(dc_search(cmd))
-{uart1_transmit(&money);}
-
-if(current_decode(cmd))
-{uart1_transmit(&money);}
-
-if(voltage_decode(cmd))
-{uart1_transmit(&money);}
-
-if(exp_voltage_decode(cmd))
-{uart1_transmit(&money);}
-
-if(string_compare(cmd,&dacup))
-{dac_up(200U);uart1_transmit(&money);}
-
-if(string_compare(cmd,&dacdn))
-{dac_down(200U);uart1_transmit(&money);}
-
-if(string_compare(cmd,&dacmn))
-{dac_set(0U);uart1_transmit(&money);}
-
-if(string_compare(cmd,&dacmx))
-{dac_set(4095U);uart1_transmit(&money);}
-
-
-if(string_compare(cmd,&dacrpt))
-{dacreport();}
-
-if(string_compare(cmd,&drven))
-{
-start_up_flags &= 0U;
-system_flags |= START_UP_FLAG;
-uart1_transmit(&money);
-}
-
-if(string_compare(cmd,&drvdis))
-{
-system_flags &= ~(PMIC_ENABLE_FLAG);
-uart1_transmit(&money);
-}
-
-
-if(string_compare(cmd,&csrs))
-{cs_offset = ((&cs_channel)->avg)-40U; uart1_transmit(&money);}
-
 uart1_transmit(&cli_return);
 uart1_transmit(&prompt);
 
-}
-
-uint8_t dc_search(STRING* cmd)
-{
-uint8_t ones;
-uint8_t tens;
-uint8_t new_duty;
-
-if(((cmd)->length) != 4U)
-{return 0U;}
-
-
-if( (((cmd)->string)[0U]) != 'd' )
-{return 0U;}
-if( (((cmd)->string)[1U]) != 'c' )
-{return 0U;}
-
-if( ((((cmd)->string)[2U]) > 47U) && ((((cmd)->string)[2U]) < 58U ) )
-{tens = (((cmd)->string)[2U]) - 48U; }
-else
-{return 0U;}
-
-if( ((((cmd)->string)[3U]) > 47U) && ((((cmd)->string)[3U]) < 58U ) )
-{ones = (((cmd)->string)[3U]) - 48U;}
-else
-{return 0U;}
-
-new_duty = (tens*10) + ones;
-
-set_duty_cycle(new_duty);
-
-return 1U;
 
 }
 
-
-uint8_t current_decode(STRING* cmd)
+void tmrreport(void)
 {
-uint8_t ones;
-uint8_t tens;
-uint32_t hundreds;
-uint32_t thousands;
-uint32_t new_current;
 
-if(((cmd)->length) != 6U)
-{return 0U;}
-
-
-if( (((cmd)->string)[0U]) != 'i' )
-{return 0U;}
-if( (((cmd)->string)[1U]) != 's' )
-{return 0U;}
-
-if( ((((cmd)->string)[2U]) > 47U) && ((((cmd)->string)[2U]) < 58U ) )
-{thousands = (((cmd)->string)[2U]) - 48U; }
-else
-{return 0U;}
-
-if( ((((cmd)->string)[3U]) > 47U) && ((((cmd)->string)[3U]) < 58U ) )
-{hundreds = (((cmd)->string)[3U]) - 48U;}
-else
-{return 0U;}
-
-if( ((((cmd)->string)[4U]) > 47U) && ((((cmd)->string)[4U]) < 58U ) )
-{tens = (((cmd)->string)[4U]) - 48U;}
-else
-{return 0U;}
-
-if( ((((cmd)->string)[5U]) > 47U) && ((((cmd)->string)[5U]) < 58U ) )
-{ones = (((cmd)->string)[5U]) - 48U;}
-else
-{return 0U;}
-
-
-
-new_current = (thousands*1000)+(hundreds * 100) + (tens*10) + ones;
-
-if(new_current > DEFAULT_MAX_CURRENT)
-{hs_i_target = DEFAULT_MAX_CURRENT;}
-else
-{hs_i_target = new_current;}
-
-if((system_flags & THERMAL_CON_FLAG) == 0U)
-{i_target = new_current;}
-
-return 1U;
-
-}
-
-
-uint8_t voltage_decode(STRING* cmd)
-{
-uint8_t ones;
-uint8_t tens;
-uint32_t hundreds;
-uint32_t thousands;
-uint32_t new_voltage;
-
-if(((cmd)->length) != 6U)
-{return 0U;}
-
-
-if( (((cmd)->string)[0U]) != 'v' )
-{return 0U;}
-if( (((cmd)->string)[1U]) != 's' )
-{return 0U;}
-
-if( ((((cmd)->string)[2U]) > 47U) && ((((cmd)->string)[2U]) < 58U ) )
-{thousands = (((cmd)->string)[2U]) - 48U; }
-else
-{return 0U;}
-
-if( ((((cmd)->string)[3U]) > 47U) && ((((cmd)->string)[3U]) < 58U ) )
-{hundreds = (((cmd)->string)[3U]) - 48U;}
-else
-{return 0U;}
-
-if( ((((cmd)->string)[4U]) > 47U) && ((((cmd)->string)[4U]) < 58U ) )
-{tens = (((cmd)->string)[4U]) - 48U;}
-else
-{return 0U;}
-
-if( ((((cmd)->string)[5U]) > 47U) && ((((cmd)->string)[5U]) < 58U ) )
-{ones = (((cmd)->string)[5U]) - 48U;}
-else
-{return 0U;}
-
-
-
-new_voltage = (thousands*1000)+(hundreds * 100) + (tens*10) + ones;
-
-if(new_voltage > DEFAULT_MAX_VOLTAGE)
-{v_ovp = DEFAULT_MAX_VOLTAGE;}
-else
-{v_ovp = new_voltage;}
-
-
-return 1U;
-
-}
-
-uint8_t exp_voltage_decode(STRING* cmd)
-{
-uint8_t ones;
-uint8_t tens;
-uint32_t hundreds;
-uint32_t thousands;
-uint32_t new_voltage;
-
-if(((cmd)->length) != 6U)
-{return 0U;}
-
-
-if( (((cmd)->string)[0U]) != 'e' )
-{return 0U;}
-if( (((cmd)->string)[1U]) != 'v' )
-{return 0U;}
-
-if( ((((cmd)->string)[2U]) > 47U) && ((((cmd)->string)[2U]) < 58U ) )
-{thousands = (((cmd)->string)[2U]) - 48U; }
-else
-{return 0U;}
-
-if( ((((cmd)->string)[3U]) > 47U) && ((((cmd)->string)[3U]) < 58U ) )
-{hundreds = (((cmd)->string)[3U]) - 48U;}
-else
-{return 0U;}
-
-if( ((((cmd)->string)[4U]) > 47U) && ((((cmd)->string)[4U]) < 58U ) )
-{tens = (((cmd)->string)[4U]) - 48U;}
-else
-{return 0U;}
-
-if( ((((cmd)->string)[5U]) > 47U) && ((((cmd)->string)[5U]) < 58U ) )
-{ones = (((cmd)->string)[5U]) - 48U;}
-else
-{return 0U;}
-
-
-
-new_voltage = (thousands*1000)+(hundreds * 100) + (tens*10) + ones;
-
-if(new_voltage > DEFAULT_MAX_VOLTAGE)
-{exp_ov = DEFAULT_MAX_VOLTAGE;}
-else
-{exp_ov = new_voltage;}
-
-
-return 1U;
-
-}
-
-
-
-
-void flagclear(void)
-{
-system_flags &= ~(ADC_CONV_FLAG);
-uart1_transmit(&money);
-}
-
-
-void tempreport(void)
-{
 	int32_t temp;
-	uart1_transmit(&capE);
-	temp = (&ex_temp)->avg;
+
+	uart1_transmit(&pwm);
+	temp = ((TIM1)->CCR3);
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	uart1_transmit(&capI);
-	temp = (&in_temp)->avg;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-}
-
-void tim1report(void)
-{
-	uint32_t temp;
-
+	uart1_transmit(&div);
 	temp = ((TIM1)->ARR);
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
 
 
-	temp = ((TIM1)->CCR1);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-    temp = ((TIM1)->CCR3);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-
-	temp = ((TIM1)->SR);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = ((TIM1)->CCMR1);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = ((TIM1)->CCMR2);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-
-	temp = ((TIM1)->CCMR1);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = ((TIM1)->CR1);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
+	uart1_transmit(&mod);
 	temp = mode_check();
-
-	switch(temp)
-	{
-	case LOCKOUT_MODE:uart1_transmit(&lock); break;
-	case PASSTHRU_MODE:uart1_transmit(&pass); break;
-	case BOOST_MODE:uart1_transmit(&boost); break;
-	case BUCK_MODE:uart1_transmit(&buck); break;
-	default:uart1_transmit(&cp1); break;
-	}
+    if(temp == LOCKOUT_MODE)
+    {uart1_transmit(&lock);}
+    else if(temp == BUCK_MODE)
+    {uart1_transmit(&buck);}
+    else
+    {uart1_transmit(&err);}
 
 	uart1_transmit(&cli_return);
+	uart1_transmit(&money);
+	uart1_transmit(&cli_return);
+
 }
 
-void voltreport(void)
+void adcreport(void)
 {
-	uint32_t temp;
+	int32_t temp;
 
-
-	uart1_transmit(&capC);
-	temp = (cs_channel.avg- cs_offset);
+	uart1_transmit(&cnvcnt);
+	temp = conversion_count;
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
 
-
-	uart1_transmit(&capC);
-	temp = (cs_channel.avg);
+	uart1_transmit(&ivcnt);
+	temp = iv_sample_count;
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
 
-
-
-	uart1_transmit(&capO);
-	temp = ov_channel.avg;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	uart1_transmit(&capI);
-	temp = iv_channel.avg;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-}
-
-void timereport(void)
-{
-	uint32_t temp;
-
-	temp = (((system_time)->time_nums)[ticks]);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = (((system_time)->time_nums)[millis]);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = (((system_time)->time_nums)[seconds]);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = (((system_time)->time_nums)[minutes]);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = (((system_time)->time_nums)[hours]);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-}
-
-
-void bankreport(void)
-{
-	uint32_t temp;
-	uart1_transmit(&capC);
-	temp = cs_sample_count;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	uart1_transmit(&capO);
+	uart1_transmit(&ovcnt);
 	temp = ov_sample_count;
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
 
-	uart1_transmit(&capI);
-	temp = iv_sample_count;
+	uart1_transmit(&cscnt);
+	temp = cs_sample_count;
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
+
+	uart1_transmit(&intcnt);
+	temp = in_sample_count;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&extcnt);
+	temp = ex_sample_count;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&itscnt);
+	temp = intl_sample_count;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&hpscnt);
+	temp = hipw_sample_count;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&convch);
+	temp = adc_conversion_channel;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&iconvch);
+	temp = inj_conversion_channel;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&sqr1);
+	temp = ((ADC1)->SQR1);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&sqr2);
+	temp = ((ADC1)->SQR2);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+
+
+
+	uart1_transmit(&cli_return);
+	uart1_transmit(&money);
+	uart1_transmit(&cli_return);
+
+}
+
+void voltreport(void)
+{
+	int32_t temp;
+
+	uart1_transmit(&opv);
+	temp = (&ov_channel)->avg;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&ovv);
+	temp = v_ovp;
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&ipv);
+	temp = ((&iv_channel)->avg);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&ropi);
+	temp = ((&cs_channel)->avg);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&opi);
+	temp = (((&cs_channel)->avg) - cs_offset);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&cofs);
+	temp = (cs_offset);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&aci);
+	temp = (i_target);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&hsi);
+	temp = (hs_i_target);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&cci);
+	temp = (cc_i_target);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&tsi);
+	temp = (th_i_target);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&usi);
+	temp = (us_i_target);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+	uart1_transmit(&cli_return);
+	uart1_transmit(&cli_return);
+	uart1_transmit(&cli_return);
+
+
+	uart1_transmit(&intemp);
+	temp = ((&in_temp)->avg);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&extemp);
+	temp = ((&ex_temp)->avg);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&intlsig);
+	temp = ((&intl_sig)->avg);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&hipwsig);
+	temp = ((&hipw_sig)->avg);
+	convert_to_ascii(temp);
+	uart1_transmit(&num_hold);
+	uart1_transmit(&cli_return);
+
+
+	uart1_transmit(&cli_return);
+	uart1_transmit(&money);
+	uart1_transmit(&cli_return);
+
 
 }
 
 
 void flagreport(void)
 {
-	uint32_t temp;
-	temp = system_flags;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+    int32_t temp;
+
+    uart1_transmit(&adc_init);
+	if(system_flags & ADC_INIT_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	temp = adc_conversion_channel;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&avg_bank);
+	if(system_flags & AVG_BANKS_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-
-	temp = hs_i_target;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&adc_conv);
+	if(system_flags & ADC_CONV_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	temp = th_i_target;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&avg_temp);
+	if(system_flags & AVG_TEMP_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	temp = i_target;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&temp_init);
+	if(system_flags & TEMP_INIT_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-
-}
-
-void convreport(void)
-{
-	uint32_t temp;
-	temp = conversion_count;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&pmic_init);
+	if(system_flags & PMIC_INIT_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	temp = avg_count;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&pmic_en);
+	if(system_flags & PMIC_ENABLE_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	temp = ((ADC1)->SQR1);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&ex_th_con);
+	if(system_flags & THERMAL_CON_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-
-
-}
-
-void tbankreport(void)
-{
-
-	uint32_t temp;
-
-	uart1_transmit(&capE);
-	temp = ex_sample_count;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&in_th_con);
+	if(system_flags & IN_THERMAL_CON_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	uart1_transmit(&capI);
-	temp = in_sample_count;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-}
-
-void stupreport(void)
-{
-	uint32_t temp;
-
-	temp = start_up_flags;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&ex_th_act);
+	if(system_flags & THERMAL_ACTION_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-}
-
-void dacreport(void)
-{
-	uint32_t temp;
-
-	temp = ((DAC)->DOR2);
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&in_th_act);
+	if(system_flags & IN_THERMAL_ACTION_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-
-}
-
-void adcreport(void)
-{
-
-	uint32_t temp;
-
-	temp = ((ADC1)->TR1)&0x0000FFFF;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&thwr_error);
+	if(system_flags & THERM_WIRE_ERR_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	temp = (((ADC1)->TR1)>>16U)&0x0000FFFF;
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
+	uart1_transmit(&pwwr_error);
+	if(system_flags & POWER_WIRE_ERR_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
 	uart1_transmit(&cli_return);
 
-	temp = (((ADC1)->CFGR));
-	convert_to_ascii(temp);
-	uart1_transmit(&num_hold);
-	uart1_transmit(&cli_return);
-
-	temp = (((ADC1)->ISR));
+	uart1_transmit(&wr_err_cnt);
+	temp = wire_error_count;
 	convert_to_ascii(temp);
 	uart1_transmit(&num_hold);
 	uart1_transmit(&cli_return);
 
 
+	uart1_transmit(&start_up);
+	if(system_flags & START_UP_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&inj_conv);
+	if(system_flags & INJ_CONV_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&cc);
+	if(system_flags & CC_OUTPUT_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&in_thrm_error);
+	if(system_flags & IN_THERMAL_ERROR_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&in_pwr_error);
+	if(start_up_flags & INPUT_ERR_FLAG)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
+	uart1_transmit(&cli_return);
+
+	uart1_transmit(&slave);
+	if(start_up_flags & SLAVE_MODE_ENABLED)
+	{uart1_transmit(&true);}
+	else
+	{uart1_transmit(&false);}
+	uart1_transmit(&cli_return);
+
+
+
+	uart1_transmit(&cli_return);
+	uart1_transmit(&money);
+	uart1_transmit(&cli_return);
 
 }
 

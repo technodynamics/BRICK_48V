@@ -27,7 +27,10 @@ void adc1_enable(void)
 ((GPIOA)->MODER) |= ((AN_MODE) << (GPIO_6_DSHIFT));
 ((GPIOA)->MODER) |= ((AN_MODE) << (GPIO_2_DSHIFT));
 ((GPIOA)->MODER) |= ((AN_MODE) << (GPIO_1_DSHIFT));
+((GPIOA)->MODER) |= ((AN_MODE) << (GPIO_3_DSHIFT));
+((GPIOA)->MODER) |= ((AN_MODE) << (GPIO_4_DSHIFT));
 
+//((GPIOA)->PUPDR) |= ((1U)<<(GPIO_4_DSHIFT));
 
 /*Disable Deep Power Down*/
 while(((ADC1)->CR) & DPD)
@@ -76,10 +79,12 @@ while((((ADC1)->ISR) & ADC_READY) == 0U){;}
 ((ADC1)->SQR1) &= 0U;
 ((ADC1)->SQR1) |= ((CURRENT_SENSE_CHANNEL)<<(SQ1_SHIFT));
 ((ADC1)->SQR1) |= ((OUTPUT_VOLTAGE_CHANNEL)<<(SQ3_SHIFT));
-((ADC1)->SQR2) |= ((INPUT_VOLTAGE_CHANNEL));
+((ADC1)->SQR2) |= ((INPUT_VOLTAGE_CHANNEL)<<(SQ1_SHIFT));
 ((ADC1)->SQR1) |= REG_CONV_CNT;
-
+-
 ((ADC1)->JSQR) &= 0U;
+((ADC1)->JSQR) |= ((INTL_SIG_CHANNEL)<<(JSQ4_SHIFT));
+((ADC1)->JSQR) |= ((HIPW_SIG_CHANNEL)<<(JSQ3_SHIFT));
 ((ADC1)->JSQR) |= ((INT_TEMP_CHANNEL)<<(JSQ2_SHIFT));
 ((ADC1)->JSQR) |= ((EXT_TEMP_CHANNEL)<<(JSQ1_SHIFT));
 ((ADC1)->JSQR) |= (INJ_CONV_CNT);
@@ -89,8 +94,8 @@ while((((ADC1)->ISR) & ADC_READY) == 0U){;}
 /*Set Sampling Time on all channels*/
 ((ADC1)->SMPR1) &= 0U;
 ((ADC1)->SMPR2) &= 0U;
-((ADC1)->SMPR1) |= (SMPR1_CONF << 1U);
-((ADC1)->SMPR2) |= (SMPR2_CONF << 1U);
+((ADC1)->SMPR1) |= ((SMPR1_CONF << 2U)|(SMPR1_CONF));
+((ADC1)->SMPR2) |= ((SMPR2_CONF << 2U)|(SMPR2_CONF));
 
 /*Configure the Setup*/
 ((ADC1)->CFGR) |= (AUTO_DELAY);

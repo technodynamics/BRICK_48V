@@ -109,7 +109,6 @@
 #define EXP_IN_VOLTAGE 1900U
 
 #define SHORT_WIRE_RUN 400U
-
 #define OPEN_WIRE_RUN  2485
 
 #define SHORT_WIRE 200U
@@ -117,16 +116,24 @@
 
 #define HOT_TEMP      720U
 #define COLD_TEMP     2470U
+
 #define FOLDBACK_TEMP 1400U
 //1400 ^^
+#define IN_FOLDBACK_TEMP 900U
+// 900 ^^
+#define CC_FOLDBACK_TEMP  1300U
+// 1600 ^^
+
+
 
 #define INPUT_BAD   800U
 #define INPUT_DEAD  650U
 
-#define CURRENT_HYS       25U
+#define CURRENT_HYS       15U
 #define VOLTAGE_HYS       10U
-#define PMIC_DELAY        50U
+#define PMIC_DELAY        375U
 #define THERMAL_HYS		  30U
+#define IN_THERMAL_HYS    100U
 #define THERMAL_DELAY     750U
 #define THERMAL_MAX_DELTA 50U
 #define THERMAL_STEP      25U
@@ -137,25 +144,32 @@
 
 #define RELAY_PIN   ((1U)<<(7U))
 #define RELAY_DELAY  500U
-#define STUP_DELAY   20U
+#define STUP_DELAY   75U
 #define WIRE_ERR_DELAY 200000U
 
 #define off 0U
 #define on 1U
 
-#define ADC_INIT_FLAG       1U
-#define AVG_BANKS_FLAG      2U
-#define ADC_CONV_FLAG       4U
-#define AVG_TEMP_FLAG       8U
-#define TEMP_INIT_FLAG      16U
-#define PMIC_INIT_FLAG      32U
-#define PMIC_ENABLE_FLAG    64U
-#define PMIC_ACTION_FLAG    128U
-#define THERMAL_CON_FLAG    256U
-#define THERMAL_ACTION_FLAG 512U
-#define THERM_WIRE_ERR_FLAG 1024U
-#define START_UP_FLAG       2048U
-#define POWER_WIRE_ERR_FLAG 4096U
+#define ADC_INIT_FLAG           1U
+#define AVG_BANKS_FLAG          2U
+#define ADC_CONV_FLAG           4U
+#define AVG_TEMP_FLAG           8U
+#define TEMP_INIT_FLAG          16U
+#define PMIC_INIT_FLAG          32U
+#define PMIC_ENABLE_FLAG        64U
+#define PMIC_ACTION_FLAG        128U
+#define THERMAL_CON_FLAG        256U
+#define THERMAL_ACTION_FLAG     512U
+#define THERM_WIRE_ERR_FLAG     1024U
+#define START_UP_FLAG           2048U
+#define POWER_WIRE_ERR_FLAG     4096U
+#define INJ_CONV_FLAG           8192U
+#define IN_THERMAL_CON_FLAG     16384U
+#define IN_THERMAL_ACTION_FLAG  32768U
+#define CC_OUTPUT_FLAG          65536U
+#define IN_THERMAL_ERROR_FLAG   131072U
+#define SLAVE_MODE_ENABLED      262144U
+
 
 
 #define FIRST_LAP_FLAG    1U
@@ -184,12 +198,12 @@ typedef struct{
 }NUMBER;
 
 typedef struct{
-	uint32_t samples[25U];
+	uint32_t samples[15U];
 	uint32_t avg;
 	uint32_t new_samp;
 }SAMP_BANK;
 
-#define SAMP_BANK_LENGTH 25U
+#define SAMP_BANK_LENGTH 15U
 
 
 void system_management(void);
@@ -210,7 +224,10 @@ void relay_control(uint8_t on_off);
 
 void adc_management(void);
 void pmic_management(void);
-void thermal_management(void);
+void ex_thermal_management(void);
+void in_thermal_management(void);
+void af_thermal_management(void);
+
 void start_up_procedure(void);
 
 void button_managment(void);
@@ -218,28 +235,15 @@ void button_managment(void);
 
 
 
-void tim1report(void);
+
 void voltreport(void);
-void timereport(void);
-void bankreport(void);
-void tbankreport(void);
 void flagreport(void);
-void flagclear(void);
-void convreport(void);
-void tempreport(void);
-void dacreport(void);
-void stupreport(void);
 void adcreport(void);
-
-uint8_t dc_search(STRING* cmd);
-uint8_t current_decode(STRING* cmd);
-uint8_t voltage_decode(STRING* cmd);
-uint8_t exp_voltage_decode(STRING* cmd);
+void tmrreport(void);
 
 
-void driveB(uint8_t pin, uint8_t on_off);
-void driveA(uint8_t pin, uint8_t on_off);
 
-void sendcp(uint8_t cp);
+
+
 
 #endif /* SYSTEM_H_ */

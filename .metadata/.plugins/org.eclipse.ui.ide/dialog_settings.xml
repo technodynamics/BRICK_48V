@@ -10,6 +10,10 @@
 		<item value="C:\Users\Engineering Laptop\Documents\GitHub\BRICK_48V\LiteOS_0.000"/>
 		<item value="C:\Users\neufe\Documents\GitHub\BRICK_48V\LiteOS_0.000"/>
 	</list>
+	<section name="WORKBENCH_SETTINGS">
+		<list key="ENABLED_TRANSFERS">
+		</list>
+	</section>
 	<section name="ChooseWorkspaceDialogSettings">
 		<item value="174" key="DIALOG_X_ORIGIN"/>
 		<item value="197" key="DIALOG_Y_ORIGIN"/>

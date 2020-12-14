@@ -1,4 +1,9 @@
-dac.c:15:6:dac_enable	0	static
-dac.c:36:6:dac_up	0	static
-dac.c:45:6:dac_down	0	static
-dac.c:56:6:dac_set	0	static
+dac.c:16:6:dac_enable	0	static
+dac.c:35:6:master_mode_enable	0	static
+dac.c:51:6:master_pull_down	0	static
+dac.c:61:6:master_reset	0	static
+dac.c:72:6:master_down	0	static
+dac.c:83:6:master_up	0	static
+dac.c:94:6:dac_up	0	static
+dac.c:103:6:dac_down	0	static
+dac.c:114:6:dac_set	0	static

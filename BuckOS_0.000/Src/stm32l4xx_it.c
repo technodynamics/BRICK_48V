@@ -79,6 +79,10 @@ data = ((ADC1)->JDR1);
 add_sample(data,1U);
 data = ((ADC1)->JDR2);
 add_sample(data,1U);
+data = ((ADC1)->JDR3);
+add_sample(data,1U);
+data = ((ADC1)->JDR4);
+add_sample(data,1U);
 raise_temp_flag();
 ((ADC1)->ISR) |= JEOSI;
 }
